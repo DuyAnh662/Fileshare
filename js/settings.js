@@ -2,6 +2,28 @@
 // SETTINGS
 // ============================================
 
+// PWA Icon Manager - Update manifest based on theme
+function updatePWAManifest(theme) {
+    const manifestLink = document.querySelector('link[rel="manifest"]');
+    if (manifestLink) {
+        const manifestFile = theme === 'dark' ? 'manifest-dark.json' : 'manifest-light.json';
+        manifestLink.href = manifestFile;
+    }
+    
+    // Update apple-touch-icon if exists
+    const appleTouchIcon = document.querySelector('link[rel="apple-touch-icon"]');
+    if (appleTouchIcon) {
+        const iconFile = theme === 'dark' ? 'icons/icon-dark-192.png' : 'icons/icon-light-192.png';
+        appleTouchIcon.href = iconFile;
+    }
+    
+    // Update theme-color meta tag
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeColorMeta) {
+        themeColorMeta.content = theme === 'dark' ? '#1a1a2e' : '#ffffff';
+    }
+}
+
 // Settings Manager
 const settings = {
     defaults: {
@@ -121,12 +143,28 @@ function saveSettings() {
     settings.set('theme', selectedTheme);
     document.documentElement.setAttribute('data-theme', selectedTheme);
     localStorage.setItem('theme', selectedTheme);
+    
+    // Update PWA manifest and icons based on theme
+    updatePWAManifest(selectedTheme);
 
     if (typeof utils !== 'undefined' && utils.showToast) {
         utils.showToast('Settings saved!', 'success');
     }
 
     closeSettingsModal();
+}
+
+// Initialize PWA manifest based on saved theme on page load
+function initPWATheme() {
+    const savedTheme = settings.get('theme') || 'light';
+    updatePWAManifest(savedTheme);
+}
+
+// Run on DOM ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPWATheme);
+} else {
+    initPWATheme();
 }
 
 // Global functions for compatibility (to avoid errors on pages calling these)
@@ -141,3 +179,5 @@ window.settings = settings;
 window.openSettingsModal = openSettingsModal;
 window.closeSettingsModal = closeSettingsModal;
 window.saveSettings = saveSettings;
+window.updatePWAManifest = updatePWAManifest;
+window.initPWATheme = initPWATheme;
