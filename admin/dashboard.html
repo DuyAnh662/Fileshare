@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin Dashboard - FileShare</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-content">
+            <a href="../index.html" class="logo">
+                <span class="logo-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                    </svg>
+                </span>
+                <span>FileShare</span>
+            </a>
+
+            <nav class="nav">
+                <a href="../index.html" class="nav-link">Home</a>
+                <a href="../files.html" class="nav-link">Files</a>
+                <a href="../upload.html" class="nav-link">Upload</a>
+                <button class="nav-icon-btn" onclick="openSettingsModal()" title="Settings">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3" />
+                        <path
+                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                    </svg>
+                </button>
+                <button id="logout-btn" class="btn btn-secondary btn-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" x2="9" y1="12" y2="12" />
+                    </svg>
+                    <span>Logout</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title">
+                <span class="icon icon-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <circle cx="12" cy="12" r="3" />
+                        <path
+                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                    </svg>
+                </span>
+                <span>Admin Dashboard</span>
+            </h1>
+            <p class="page-subtitle">Manage files and moderate content</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="section">
+        <div class="container">
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="card stat-card">
+                    <div class="stat-number" id="stat-pending">-</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-number" id="stat-approved">-</div>
+                    <div class="stat-label">Active</div>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-number" id="stat-hidden">-</div>
+                    <div class="stat-label">Hidden</div>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-number" id="stat-total">-</div>
+                    <div class="stat-label">Total Files</div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tab-buttons">
+                <button class="tab-btn active" data-tab="pending">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    <span>Pending Approval</span>
+                </button>
+                <button class="tab-btn" data-tab="files">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                    </svg>
+                    <span>Manage Files</span>
+                </button>
+            </div>
+
+            <!-- Tab: Pending -->
+            <div class="tab-content active" id="tab-pending">
+                <div class="table-wrapper">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>File Name</th>
+                                <th>Type</th>
+                                <th>Submitted Date</th>
+                                <th>Link</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pending-tbody">
+                            <tr>
+                                <td colspan="5">
+                                    <div class="loading">
+                                        <div class="spinner"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab: Files -->
+            <div class="tab-content" id="tab-files">
+                <div class="table-wrapper">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>File Name</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Posted Date</th>
+                                <th>Link</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="files-tbody">
+                            <tr>
+                                <td colspan="6">
+                                    <div class="loading">
+                                        <div class="spinner"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3 id="confirm-title">Confirm</h3>
+                <button class="modal-close" onclick="hideConfirmModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <p id="confirm-message" style="color: var(--text-secondary); margin-bottom: 24px;"></p>
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button class="btn btn-secondary" onclick="hideConfirmModal()">Cancel</button>
+                <button class="btn btn-danger" id="confirm-btn">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/settings.js"></script>
+    <script src="../js/icons.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/api.js"></script>
+    <script>
+        // Check auth
+        if (!api.isAdminLoggedIn()) {
+            window.location.href = 'login.html';
+        }
+
+        // Data
+        let pendingFiles = [];
+        let approvedFiles = [];
+
+        // Elements
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const pendingTbody = document.getElementById('pending-tbody');
+        const filesTbody = document.getElementById('files-tbody');
+
+        // Flags to track loaded tabs
+        let pendingLoaded = false;
+        let filesLoaded = false;
+
+        // Tab switching - always load data for the clicked tab
+        tabButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabButtons.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+
+                // Load data for clicked tab
+                if (btn.dataset.tab === 'pending') {
+                    loadPendingData();
+                } else if (btn.dataset.tab === 'files') {
+                    loadFilesData();
+                }
+            });
+        });
+
+        // Load pending files only
+        async function loadPendingData() {
+            try {
+                const pendingResult = await api.getPendingFiles();
+                if (pendingResult.success) {
+                    pendingFiles = pendingResult.data || [];
+                    renderPending();
+                    pendingLoaded = true;
+                } else {
+                    pendingTbody.innerHTML = `<tr><td colspan="5" class="text-center" style="padding: 40px; color: var(--danger);">Error: ${pendingResult.error}</td></tr>`;
+                }
+                updateStats();
+            } catch (err) {
+                pendingTbody.innerHTML = `<tr><td colspan="5" class="text-center" style="padding: 40px; color: var(--danger);">Error: ${err.message}</td></tr>`;
+            }
+        }
+
+        // Load approved files only
+        async function loadFilesData() {
+            try {
+                const filesResult = await api.getAllApprovedFiles();
+                if (filesResult.success) {
+                    approvedFiles = filesResult.data || [];
+                    renderFiles();
+                    filesLoaded = true;
+                } else {
+                    filesTbody.innerHTML = `<tr><td colspan="6" class="text-center" style="padding: 40px; color: var(--danger);">Error: ${filesResult.error}</td></tr>`;
+                }
+                updateStats();
+            } catch (err) {
+                filesTbody.innerHTML = `<tr><td colspan="6" class="text-center" style="padding: 40px; color: var(--danger);">Error: ${err.message}</td></tr>`;
+            }
+        }
+
+        // Load all data (used when refreshing after actions)
+        async function loadData() {
+            pendingLoaded = false;
+            filesLoaded = false;
+            await loadPendingData();
+            await loadFilesData();
+        }
+
+        // Update stats
+        function updateStats() {
+            document.getElementById('stat-pending').textContent = pendingFiles.length;
+            document.getElementById('stat-approved').textContent = approvedFiles.filter(f => !f.hidden).length;
+            document.getElementById('stat-hidden').textContent = approvedFiles.filter(f => f.hidden).length;
+            document.getElementById('stat-total').textContent = approvedFiles.length;
+        }
+
+        // Render pending table
+        function renderPending() {
+            if (pendingFiles.length === 0) {
+                pendingTbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted" style="padding: 40px;">No pending files to review.</td></tr>`;
+                return;
+            }
+
+            pendingTbody.innerHTML = pendingFiles.map(file => `
+        <tr>
+          <td>
+            <strong>${utils.escapeHtml(file.title)}</strong>
+            ${file.description ? `<br><small class="text-muted">${utils.escapeHtml(utils.truncateText(file.description, 50))}</small>` : ''}
+          </td>
+          <td>${utils.getFileTypeBadge(file.file_type)}</td>
+          <td>${utils.formatRelativeTime(file.created_at)}</td>
+          <td>
+            <a href="${utils.escapeHtml(file.drive_link)}" target="_blank" class="file-link">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+              Open
+            </a>
+          </td>
+          <td>
+            <div class="table-actions">
+              <button class="btn btn-success btn-sm" onclick="approveFile('${file.id}')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                Approve
+              </button>
+              <button class="btn btn-danger btn-sm" onclick="rejectFile('${file.id}')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                Reject
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+        }
+
+        // Render files table
+        function renderFiles() {
+            if (approvedFiles.length === 0) {
+                filesTbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted" style="padding: 40px;">No approved files yet.</td></tr>`;
+                return;
+            }
+
+            filesTbody.innerHTML = approvedFiles.map(file => `
+        <tr class="${file.hidden ? 'row-hidden' : ''}">
+          <td>
+            <strong>${utils.escapeHtml(file.title)}</strong>
+            ${file.description ? `<br><small class="text-muted">${utils.escapeHtml(utils.truncateText(file.description, 50))}</small>` : ''}
+          </td>
+          <td>${utils.getFileTypeBadge(file.file_type)}</td>
+          <td>
+            ${file.hidden
+                    ? `<span class="badge badge-warning">Hidden</span>`
+                    : `<span class="badge badge-success">Approved</span>`
+                }
+          </td>
+          <td>${utils.formatRelativeTime(file.created_at)}</td>
+          <td>
+            <a href="${utils.escapeHtml(file.drive_link)}" target="_blank" class="file-link">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+              Open
+            </a>
+          </td>
+          <td>
+            <div class="table-actions">
+              ${file.hidden
+                    ? `<button class="btn btn-secondary btn-sm" onclick="showFile('${file.id}')">Show</button>`
+                    : `<button class="btn btn-secondary btn-sm" onclick="hideFile('${file.id}')">Hide</button>`
+                }
+              <button class="btn btn-danger btn-sm btn-icon" onclick="deleteFile('${file.id}')" title="Permanently Delete">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+        }
+
+        // Actions
+        async function approveFile(id) {
+            const result = await api.approveFile(id);
+            if (result.success) {
+                utils.showToast('File approved successfully!', 'success');
+                loadData();
+            } else {
+                utils.showToast('Error: ' + result.error, 'error');
+            }
+        }
+
+        async function rejectFile(id) {
+            showConfirmModal(
+                'Reject File',
+                'Are you sure you want to reject this file? This will permanently delete it from the review list.',
+                async () => {
+                    const result = await api.rejectFile(id);
+                    if (result.success) {
+                        utils.showToast('File rejected and deleted.', 'success');
+                        loadData();
+                    } else {
+                        utils.showToast('Error: ' + result.error, 'error');
+                    }
+                }
+            );
+        }
+
+        async function hideFile(id) {
+            const result = await api.hideFile(id);
+            if (result.success) {
+                utils.showToast('File hidden from public list.', 'success');
+                loadData();
+            } else {
+                utils.showToast('Error: ' + result.error, 'error');
+            }
+        }
+
+        async function showFile(id) {
+            const result = await api.showFile(id);
+            if (result.success) {
+                utils.showToast('File is now visible again.', 'success');
+                loadData();
+            } else {
+                utils.showToast('Error: ' + result.error, 'error');
+            }
+        }
+
+        async function deleteFile(id) {
+            showConfirmModal(
+                'Delete Permanently',
+                'Are you sure you want to permanently delete this file metadata? This cannot be undone.',
+                async () => {
+                    const result = await api.deleteFile(id);
+                    if (result.success) {
+                        utils.showToast('File deleted permanently.', 'success');
+                        loadData();
+                    } else {
+                        utils.showToast('Error: ' + result.error, 'error');
+                    }
+                }
+            );
+        }
+
+        // Logout
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                api.logoutAdmin();
+                window.location.href = 'login.html';
+            });
+        }
+
+        // Confirmation Modal functions
+        let confirmCallback = null;
+
+        function showConfirmModal(title, message, callback) {
+            document.getElementById('confirm-title').textContent = title;
+            document.getElementById('confirm-message').textContent = message;
+            confirmCallback = callback;
+            document.getElementById('confirm-modal').classList.add('active');
+        }
+
+        function hideConfirmModal() {
+            document.getElementById('confirm-modal').classList.remove('active');
+            confirmCallback = null;
+        }
+
+        document.getElementById('confirm-btn').addEventListener('click', async () => {
+            if (confirmCallback) {
+                await confirmCallback();
+            }
+            hideConfirmModal();
+        });
+
+        // Init - load both data sets to statistics display correctly
+        async function initLoad() {
+            await loadPendingData();
+            // Load files data in background for accurate stats
+            const filesResult = await api.getAllApprovedFiles();
+            if (filesResult.success) {
+                approvedFiles = filesResult.data || [];
+                updateStats();
+            }
+        }
+        initLoad();
+
+        // Expose to window
+        window.approveFile = approveFile;
+        window.rejectFile = rejectFile;
+        window.hideFile = hideFile;
+        window.showFile = showFile;
+        window.deleteFile = deleteFile;
+    </script>
+
+    <style>
+        .row-hidden {
+            opacity: 0.6;
+        }
+
+        .badge-warning {
+            background: var(--warning-bg);
+            color: var(--warning);
+        }
+
+        .badge-success {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+    </style>
+</body>
+
+</html>

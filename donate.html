@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Support FileShare All Free project. Help us keep the platform free and ad-less for everyone.">
+    <title>Support Us - FileShare All Free</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="js/head.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .donate-hero {
+            padding: 80px 0 60px;
+            text-align: center;
+        }
+
+        .donate-hero-icon {
+            width: 72px;
+            height: 72px;
+            background: var(--text-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+
+        .donate-hero-icon svg {
+            width: 32px;
+            height: 32px;
+            stroke: var(--bg-primary);
+        }
+
+        .donate-hero-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .donate-hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 560px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        .free-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 24px;
+            letter-spacing: 0.5px;
+        }
+
+        .tiers-section {
+            padding: 60px 0;
+            background: var(--bg-secondary);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .section-header h2 {
+            margin-bottom: 8px;
+        }
+
+        .tiers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .tier-feature-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: 40px 32px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tier-feature-card:hover {
+            border-color: var(--text-primary);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .tier-feature-card.featured {
+            border-color: var(--text-primary);
+        }
+
+        .tier-feature-card.featured::before {
+            content: 'RECOMMENDED';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .tier-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--bg-tertiary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .tier-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke: var(--text-primary);
+        }
+
+        .tier-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .tier-uploads {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin: 20px 0 8px;
+            line-height: 1;
+        }
+
+        .tier-uploads-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        .tier-requirement {
+            background: var(--bg-secondary);
+            padding: 16px 20px;
+            border-radius: var(--radius-md);
+            margin: 24px 0;
+        }
+
+        .tier-requirement-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tier-requirement-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .tier-duration {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 24px;
+        }
+
+        .tier-features {
+            text-align: left;
+            margin: 24px 0;
+            padding: 24px 0;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tier-feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .tier-feature-item svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--text-primary);
+            flex-shrink: 0;
+        }
+
+        .tier-btn {
+            width: 100%;
+            padding: 14px 24px;
+            margin-top: 8px;
+        }
+
+        .tier-btn.primary {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            border: 2px solid var(--text-primary);
+        }
+
+        .tier-btn.primary:hover {
+            background: transparent;
+            color: var(--text-primary);
+        }
+
+        .tier-btn.secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .tier-btn.secondary:hover {
+            border-color: var(--text-primary);
+        }
+
+        .how-section {
+            padding: 80px 0;
+        }
+
+        .how-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+            margin-top: 48px;
+        }
+
+        @media (max-width: 768px) {
+            .how-steps {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .how-steps {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .how-step {
+            text-align: center;
+        }
+
+        .how-step-number {
+            width: 48px;
+            height: 48px;
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 0 auto 16px;
+        }
+
+        .how-step-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .how-step-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .faq-section {
+            padding: 80px 0;
+            background: var(--bg-secondary);
+        }
+
+        .faq-list {
+            max-width: 640px;
+            margin: 48px auto 0;
+        }
+
+        .faq-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .faq-answer {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-size: 0.9rem;
+        }
+
+        .cta-section {
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .cta-title {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+
+        .cta-btn {
+            padding: 14px 32px;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                    </svg>
+                </span>
+                <span>FileShare</span>
+            </a>
+
+            <button class="menu-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <line x1="4" x2="20" y1="12" y2="12" />
+                    <line x1="4" x2="20" y1="6" y2="6" />
+                    <line x1="4" x2="20" y1="18" y2="18" />
+                </svg>
+            </button>
+
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="files.html" class="nav-link">Files</a>
+                <a href="upload.html" class="nav-link">Upload</a>
+                <a href="donate.html" class="nav-link active">Support</a>
+                <button class="nav-icon-btn" onclick="openSettingsModal()" title="Settings">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3" />
+                        <path
+                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                    </svg>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="donate-hero">
+        <div class="container">
+            <div class="donate-hero-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <path
+                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+            </div>
+            <h1 class="donate-hero-title">Support FileShare</h1>
+            <p class="donate-hero-subtitle">
+                Unlock more uploads by completing simple tasks. Help keep FileShare running and get rewarded —
+                it's completely free, no payment required.
+            </p>
+            <div class="free-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                </svg>
+                100% FREE — NO PAYMENT REQUIRED
+            </div>
+        </div>
+    </section>
+
+    <!-- Tiers Section -->
+    <section class="tiers-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Choose Your Tier</h2>
+                <p class="text-muted">Complete tasks to unlock more uploads each month</p>
+            </div>
+
+            <div class="tiers-grid">
+                <!-- Supporter Tier -->
+                <div class="tier-feature-card">
+                    <div class="tier-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polygon
+                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                        </svg>
+                    </div>
+                    <h3 class="tier-title">Supporter</h3>
+                    <div class="tier-uploads">50</div>
+                    <div class="tier-uploads-label">uploads per month</div>
+
+                    <div class="tier-requirement">
+                        <div class="tier-requirement-label">Requirement</div>
+                        <div class="tier-requirement-value">Complete 5 tasks</div>
+                    </div>
+
+                    <div class="tier-duration">Valid for 1.5 months after reaching goal</div>
+
+                    <div class="tier-features">
+                        <div class="tier-feature-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <span>50 file uploads per month</span>
+                        </div>
+                        <div class="tier-feature-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <span>~30 seconds per task</span>
+                        </div>
+                        <div class="tier-feature-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <span>Support our free service</span>
+                        </div>
+                    </div>
+
+                    <button class="btn tier-btn secondary" onclick="startLootLabsTask()">
+                        Start Earning →
+                    </button>
+                </div>
+
+                <!-- Premium Tier -->
+                <div class="tier-feature-card featured">
+                    <div class="tier-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                            <path d="M2 17l10 5 10-5" />
+                            <path d="M2 12l10 5 10-5" />
+                        </svg>
+                    </div>
+                    <h3 class="tier-title">Premium</h3>
+                    <div class="tier-uploads">100</div>
+                    <div class="tier-uploads-label">uploads per month</div>
+
+                    <div class="tier-requirement">
+                        <div class="tier-requirement-label">Requirement</div>
+                        <div class="tier-requirement-value">Complete 50 tasks</div>
+                    </div>
+
+                    <div class="tier-duration">Valid for 1 year after reaching goal</div>
+
+                    <div class="tier-features">
+                        <div class="tier-feature-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <span>100 file uploads per month</span>
+                        </div>
+                        <div class="tier-feature-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <span>Long-term supporter status</span>
+                        </div>
+                        <div class="tier-feature-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <span>Maximum upload capacity</span>
+                        </div>
+                    </div>
+
+                    <button class="btn tier-btn primary" onclick="startLootLabsTask()">
+                        Start Earning →
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>How It Works</h2>
+                <p class="text-muted">Simple steps to unlock more uploads</p>
+            </div>
+
+            <div class="how-steps">
+                <div class="how-step">
+                    <div class="how-step-number">1</div>
+                    <h4 class="how-step-title">Click Start</h4>
+                    <p class="how-step-desc">Click the button above or on the upload page to begin.</p>
+                </div>
+
+                <div class="how-step">
+                    <div class="how-step-number">2</div>
+                    <h4 class="how-step-title">View Content</h4>
+                    <p class="how-step-desc">Watch or interact with content. Takes about 30 seconds.</p>
+                </div>
+
+                <div class="how-step">
+                    <div class="how-step-number">3</div>
+                    <h4 class="how-step-title">Get Credit</h4>
+                    <p class="how-step-desc">Your completion is automatically recorded.</p>
+                </div>
+
+                <div class="how-step">
+                    <div class="how-step-number">4</div>
+                    <h4 class="how-step-title">Unlock More</h4>
+                    <p class="how-step-desc">Reach 5 or 50 completions to upgrade your tier!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Frequently Asked Questions</h2>
+            </div>
+
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question">Is this really free?</div>
+                    <div class="faq-answer">
+                        Yes, 100% free. You don't pay anything. You simply view content, and in return,
+                        you get more upload capacity. The ad revenue helps us keep FileShare running.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">How long does each task take?</div>
+                    <div class="faq-answer">
+                        Each task takes approximately 30 seconds to complete. You can do multiple tasks whenever you
+                        have time.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">When does my tier expire?</div>
+                    <div class="faq-answer">
+                        Supporter tier (5 completions) lasts for 1.5 months. Premium tier (50 completions) lasts for 1
+                        full year.
+                        After expiration, you return to the free tier with 30 uploads/month.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">Can I upgrade from Supporter to Premium?</div>
+                    <div class="faq-answer">
+                        Yes! Your completion count is saved permanently. If you continue completing tasks to reach 50,
+                        you'll be upgraded to Premium tier automatically.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">Why should I support FileShare?</div>
+                    <div class="faq-answer">
+                        FileShare is a free service that costs money to run. By completing tasks, you help cover server
+                        costs
+                        and keep the service free for everyone. Plus, you get more uploads as a thank you!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2 class="cta-title">Ready to Get Started?</h2>
+            <p class="text-muted">Start completing tasks now and unlock more uploads — it's free!</p>
+
+            <div class="cta-buttons">
+                <button class="btn btn-primary cta-btn" onclick="startLootLabsTask()">
+                    Start Now — It's Free
+                </button>
+                <a href="upload.html" class="btn btn-secondary cta-btn">
+                    Go to Upload Page
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>FileShare</h4>
+                    <p class="text-muted">File sharing platform via Google Drive. Simple, safe, and free.</p>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Navigation</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="files.html">File List</a></li>
+                        <li><a href="upload.html">Upload File</a></li>
+                        <li><a href="donate.html">Support Us</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="terms.html">Terms of Use</a></li>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="dmca.html">Report Violation</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 FileShare. No file storage - Metadata only.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/icons.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/rateLimit.js"></script>
+    <script src="js/lootlabs.js"></script>
+    <script>
+        function startLootLabsTask() {
+            // Open LootLabs link directly
+            const url = lootlabs.buildLootLabsUrl();
+            window.open(url, '_blank');
+        }
+    </script>
+</body>
+
+</html>

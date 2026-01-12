@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Browse millions of files shared by the community. Fast download, direct Google Drive links, no waiting time.">
+    <title>Browse Files - FileShare All Free</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="js/head.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                    </svg>
+                </span>
+                <span>FileShare</span>
+            </a>
+
+            <button class="menu-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <line x1="4" x2="20" y1="12" y2="12" />
+                    <line x1="4" x2="20" y1="6" y2="6" />
+                    <line x1="4" x2="20" y1="18" y2="18" />
+                </svg>
+            </button>
+
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="files.html" class="nav-link active">Files</a>
+                <a href="upload.html" class="nav-link">Upload</a>
+                <a href="donate.html" class="nav-link" style="font-weight: 600;">Support</a>
+                <button class="nav-icon-btn" onclick="openSettingsModal()" title="Settings">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3" />
+                        <path
+                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                    </svg>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title">
+                <span class="icon icon-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                    </svg>
+                </span>
+                <span>File List</span>
+            </h1>
+            <p class="page-subtitle">All moderated and approved files</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="section">
+        <div class="container">
+
+            <!-- Filters -->
+            <div class="filters" id="filters">
+                <button class="filter-btn active" data-type="all">All</button>
+                <button class="filter-btn" data-type="apk">APK</button>
+                <button class="filter-btn" data-type="ipa">IPA</button>
+                <button class="filter-btn" data-type="exe">EXE</button>
+                <button class="filter-btn" data-type="zip">ZIP</button>
+                <button class="filter-btn" data-type="other">Other</button>
+            </div>
+
+            <!-- File Grid -->
+            <div id="file-grid" class="file-grid">
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+
+            <!-- Load More -->
+            <div id="load-more-wrapper" class="text-center mt-4 hidden">
+                <button id="load-more-btn" class="btn btn-secondary">Load More</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>FileShare</h4>
+                    <p class="text-muted">File sharing platform via Google Drive. Simple, safe, and free.</p>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Navigation</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="files.html">File List</a></li>
+                        <li><a href="upload.html">Upload File</a></li>
+                        <li><a href="donate.html">Support Us</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="terms.html">Terms of Use</a></li>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="dmca.html">Report Violation</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 FileShare. No file storage - Metadata only.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/icons.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        let currentPage = 1;
+        let currentType = 'all';
+        let isLoading = false;
+
+        const fileGrid = document.getElementById('file-grid');
+        const filtersContainer = document.getElementById('filters');
+        const loadMoreWrapper = document.getElementById('load-more-wrapper');
+        const loadMoreBtn = document.getElementById('load-more-btn');
+
+        async function loadFiles(append = false) {
+            if (isLoading) return;
+            isLoading = true;
+
+            if (!append) {
+                utils.showLoading(fileGrid);
+                currentPage = 1;
+            } else {
+                loadMoreBtn.disabled = true;
+                loadMoreBtn.textContent = 'Loading...';
+            }
+
+            const result = await api.getApprovedFiles(currentType, currentPage);
+
+            if (!result.success) {
+                utils.showEmptyState(fileGrid, 'Failed to load data', result.error, 'alertCircle');
+                isLoading = false;
+                return;
+            }
+
+            const files = result.data || [];
+
+            if (files.length === 0 && !append) {
+                utils.showEmptyState(fileGrid, 'No files found', 'No files of this type yet', 'inbox');
+                loadMoreWrapper.classList.add('hidden');
+                isLoading = false;
+                return;
+            }
+
+            if (append) {
+                fileGrid.innerHTML += files.map(file => utils.createFileCard(file)).join('');
+            } else {
+                fileGrid.innerHTML = files.map(file => utils.createFileCard(file)).join('');
+            }
+
+            if (files.length >= CONFIG.FILES_PER_PAGE) {
+                loadMoreWrapper.classList.remove('hidden');
+                loadMoreBtn.disabled = false;
+                loadMoreBtn.textContent = 'Load More';
+            } else {
+                loadMoreWrapper.classList.add('hidden');
+            }
+
+            isLoading = false;
+        }
+
+        filtersContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('filter-btn')) {
+                filtersContainer.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                currentType = e.target.dataset.type;
+                loadFiles();
+            }
+        });
+
+        loadMoreBtn.addEventListener('click', () => {
+            currentPage++;
+            loadFiles(true);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFiles();
+        });
+    </script>
+</body>
+
+</html>
