@@ -27,13 +27,31 @@ self.addEventListener('install', event => {
   );
 });
 
+// Helper to clean redirected responses (fix for Safari)
+function cleanResponse(response) {
+  if (!response || !response.redirected) {
+    return response;
+  }
+
+  const body = response.body;
+  const headers = new Headers(response.headers);
+  return new Response(body, {
+    headers: headers,
+    status: response.status,
+    statusText: response.statusText
+  });
+}
+
 // Fetch event - serve from cache if available
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
       .then(response => {
         // Return cached version or fetch from network
-        return response || fetch(event.request);
+        if (response) {
+          return cleanResponse(response);
+        }
+        return fetch(event.request).then(cleanResponse);
       })
   );
 });
