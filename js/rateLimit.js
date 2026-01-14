@@ -153,12 +153,12 @@ const rateLimit = {
                 const logo = document.querySelector('.logo');
                 if (logo) {
                     // Check if badge already exists to avoid duplicates
-                    if (logo.querySelector('.tier-badge-logo')) return;
+                    if (logo.querySelector('.tier-badge-header')) return;
 
                     const badgeText = tierInfo.tier === 2 ? 'PREMIUM' : 'SUPPORTER';
                     // Create badge element
                     const badge = document.createElement('span');
-                    badge.className = 'tier-badge-logo';
+                    badge.className = 'tier-badge-header';
                     badge.textContent = badgeText;
 
                     logo.appendChild(badge);

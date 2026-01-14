@@ -470,7 +470,7 @@ border-top: 1px solid var(--border-color);
 }
 
 /* Badges */
-.tier-badge-logo {
+.tier-badge-header {
   font-size: 0.6rem;
   padding: 2px 6px;
   border-radius: 4px;
@@ -487,7 +487,7 @@ border-top: 1px solid var(--border-color);
   text-transform: uppercase;
 }
 
-[data-theme="dark"] .tier-badge-logo {
+[data-theme="dark"] .tier-badge-header {
   background: rgba(62, 207, 142, 0.15);
   border-color: rgba(62, 207, 142, 0.4);
 }
