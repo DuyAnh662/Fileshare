@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fileshare-v1';
+const CACHE_NAME = 'fileshare-v2';
 const urlsToCache = [
   '/',
   '/index.html',
