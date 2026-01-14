@@ -146,15 +146,9 @@ const rateLimit = {
 
     // Check if should show support UI
     async shouldShowSupportUI() {
-        const { tier, expiresAt } = await this.getUserTier();
-        if (tier > 0) {
-            // Check if expired (should be handled by getUserTier, but double check)
-            if (expiresAt && new Date(expiresAt) < new Date()) {
-                return true; // Expired, so show UI
-            }
-            return false; // Valid tier, hide UI
-        }
-        return true; // Free tier, show UI
+        const tierInfo = await this.getUserTier();
+        // Show support UI only if tier is 0 (Free)
+        return tierInfo.tier === 0;
     },
 
     // Reset tier when expired
