@@ -466,30 +466,40 @@ a:hover {
   border-top: 1px solid var(--border-color);
 }
 
-border-top: 1px solid var(--border-color);
-}
-
 /* Badges */
 .tier-badge-header {
-  font-size: 0.6rem;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: rgba(62, 207, 142, 0.1);
-  color: #3ECF8E;
-  border: 1px solid rgba(62, 207, 142, 0.3);
-  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin-left: 8px;
-  position: relative;
-  top: -10px;
-  /* Adjust to look like superscript */
-  right: -2px;
-  letter-spacing: 0.5px;
+  padding: 3px 10px;
+  border-radius: 99px;
+  /* Pill shape */
+  font-size: 0.65rem;
+  /* Compact */
+  font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: linear-gradient(135deg, #3ECF8E 0%, #2dbd7e 100%);
+  /* Supabase Green Gradient */
+  color: white;
+  box-shadow: 0 2px 5px rgba(62, 207, 142, 0.25);
+  position: relative;
+  top: -8px;
+  /* Superscript-like formatting */
+  right: -4px;
+  border: none;
+  line-height: 1;
+  z-index: 10;
+}
+
+.tier-badge-header:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(62, 207, 142, 0.35);
 }
 
 [data-theme="dark"] .tier-badge-header {
-  background: rgba(62, 207, 142, 0.15);
-  border-color: rgba(62, 207, 142, 0.4);
+  box-shadow: 0 2px 5px rgba(62, 207, 142, 0.15);
 }
 
 .badge {
