@@ -144,31 +144,7 @@ const rateLimit = {
         }
     },
 
-    // Render Tier Badge in Nav
-    async renderTierBadge() {
-        try {
-            const tierInfo = await this.getUserTier();
-            if (tierInfo.tier > 0) {
-                // Find the logo element
-                const logo = document.querySelector('.logo');
-                if (logo) {
-                    // Check if badge already exists to avoid duplicates
-                    if (logo.querySelector('.tier-badge-header')) return;
 
-                    const badgeText = tierInfo.tier === 2 ? 'PREMIUM' : 'SUPPORTER';
-                    // Create badge element
-                    const badge = document.createElement('span');
-                    badge.className = 'tier-badge-header';
-                    badge.textContent = badgeText;
-
-                    logo.appendChild(badge);
-                    logo.style.overflow = 'visible'; // Ensure badge isn't clipped
-                }
-            }
-        } catch (e) {
-            console.error('Error rendering tier badge:', e);
-        }
-    },
 
     // Check if should show support UI
     async shouldShowSupportUI() {
