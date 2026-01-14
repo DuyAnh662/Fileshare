@@ -198,32 +198,22 @@ document.addEventListener('DOMContentLoaded', () => {
     initMobileMenu();
     initTheme();
 
-    // Render tier badge after rateLimit is loaded
-    // Use window load event to ensure all scripts are loaded
-    if (document.readyState === 'complete') {
-        setTimeout(() => {
-            if (typeof rateLimit !== 'undefined') {
-                renderTierBadge();
-            }
-        }, 500);
+    // Render tier badge immediately
+    if (typeof rateLimit !== 'undefined') {
+        renderTierBadge();
     } else {
         window.addEventListener('load', () => {
-            setTimeout(() => {
-                if (typeof rateLimit !== 'undefined') {
-                    renderTierBadge();
-                } else {
-                    // Wait for rateLimit to load
-                    const checkRateLimit = setInterval(() => {
-                        if (typeof rateLimit !== 'undefined') {
-                            clearInterval(checkRateLimit);
-                            renderTierBadge();
-                        }
-                    }, 100);
-
-                    // Stop checking after 5 seconds
-                    setTimeout(() => clearInterval(checkRateLimit), 5000);
-                }
-            }, 500);
+            if (typeof rateLimit !== 'undefined') {
+                renderTierBadge();
+            } else {
+                const checkRateLimit = setInterval(() => {
+                    if (typeof rateLimit !== 'undefined') {
+                        clearInterval(checkRateLimit);
+                        renderTierBadge();
+                    }
+                }, 50);
+                setTimeout(() => clearInterval(checkRateLimit), 3000);
+            }
         });
     }
 });

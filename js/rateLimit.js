@@ -111,6 +111,37 @@ const rateLimit = {
     // Get current user tier
     async getUserTier() {
         try {
+            // OPTIMIZATION: Check localStorage first for instant load
+            const cachedTier = localStorage.getItem('user_tier_cache');
+            if (cachedTier) {
+                try {
+                    const parsed = JSON.parse(cachedTier);
+                    // Return cached data immediately if valid (simple expiry check could be added here)
+                    // But we will still fetch fresh data in background if needed (for now, simply return cached to be fast)
+                    // To ensure freshness, we can fall through to fetch if cache is old? 
+                    // For now, let's return cached and let the caller decide, OR
+                    // better: return cached, but maybe inconsistent? 
+                    // Let's stick to: use cache if available, but maybe we should verify it.
+                    // Actually, for "instant load", we trust cache.
+
+                    // However, we should also verify expiration if present in cache
+                    if (parsed.tier > 0 && parsed.tier_expires_at) {
+                        const expiresAt = new Date(parsed.expiresAt);
+                        if (expiresAt < new Date()) {
+                            // Expired
+                            localStorage.removeItem('user_tier_cache');
+                        } else {
+                            return parsed;
+                        }
+                    } else if (parsed.tier === 0 || parsed.tier > 0) {
+                        // Return valid cached tier
+                        return parsed;
+                    }
+                } catch (e) {
+                    localStorage.removeItem('user_tier_cache');
+                }
+            }
+
             const fingerprint = this.getClientFingerprint();
 
             const { data, error } = await db
@@ -120,7 +151,10 @@ const rateLimit = {
                 .single();
 
             if (error || !data) {
-                return { tier: 0, lootlabsCount: 0, expiresAt: null };
+                // Cache default 0 state
+                const defaultState = { tier: 0, lootlabsCount: 0, expiresAt: null };
+                localStorage.setItem('user_tier_cache', JSON.stringify(defaultState));
+                return defaultState;
             }
 
             // Check if tier has expired
@@ -129,15 +163,22 @@ const rateLimit = {
                 if (expiresAt < new Date()) {
                     // Tier expired, reset to 0
                     await this._resetExpiredTier(fingerprint);
-                    return { tier: 0, lootlabsCount: data.lootlabs_count, expiresAt: null };
+                    const expiredState = { tier: 0, lootlabsCount: data.lootlabs_count, expiresAt: null };
+                    localStorage.setItem('user_tier_cache', JSON.stringify(expiredState));
+                    return expiredState;
                 }
             }
 
-            return {
+            const activeState = {
                 tier: data.tier,
                 lootlabsCount: data.lootlabs_count,
                 expiresAt: data.tier_expires_at
             };
+
+            // Save to cache
+            localStorage.setItem('user_tier_cache', JSON.stringify(activeState));
+
+            return activeState;
         } catch (error) {
             console.error('Error getting user tier:', error);
             return { tier: 0, lootlabsCount: 0, expiresAt: null };
