@@ -466,37 +466,30 @@ a:hover {
   border-top: 1px solid var(--border-color);
 }
 
-  border-top: 1px solid var(--border-color);
+border-top: 1px solid var(--border-color);
 }
 
 /* Badges */
-.tier-badge-nav {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+.tier-badge-logo {
+  font-size: 0.6rem;
+  padding: 2px 6px;
+  border-radius: 4px;
   background: rgba(62, 207, 142, 0.1);
   color: #3ECF8E;
-  border: 1px solid rgba(62, 207, 142, 0.2);
-  transition: all 0.2s ease;
+  border: 1px solid rgba(62, 207, 142, 0.3);
+  font-weight: 700;
   margin-left: 8px;
+  position: relative;
+  top: -10px;
+  /* Adjust to look like superscript */
+  right: -2px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
-.tier-badge-nav:hover {
+[data-theme="dark"] .tier-badge-logo {
   background: rgba(62, 207, 142, 0.15);
   border-color: rgba(62, 207, 142, 0.4);
-  transform: translateY(-1px);
-}
-
-/* Dark mode adjustment if needed, but #3ECF8E works well on dark too */
-[data-theme="dark"] .tier-badge-nav {
-  background: rgba(62, 207, 142, 0.1);
-  border-color: rgba(62, 207, 142, 0.3);
 }
 
 .badge {
