@@ -197,7 +197,83 @@ function initTheme() {
 document.addEventListener('DOMContentLoaded', () => {
     initMobileMenu();
     initTheme();
+    
+    // Render tier badge after rateLimit is loaded
+    // Use window load event to ensure all scripts are loaded
+    if (document.readyState === 'complete') {
+        setTimeout(() => {
+            if (typeof rateLimit !== 'undefined') {
+                renderTierBadge();
+            }
+        }, 500);
+    } else {
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (typeof rateLimit !== 'undefined') {
+                    renderTierBadge();
+                } else {
+                    // Wait for rateLimit to load
+                    const checkRateLimit = setInterval(() => {
+                        if (typeof rateLimit !== 'undefined') {
+                            clearInterval(checkRateLimit);
+                            renderTierBadge();
+                        }
+                    }, 100);
+                    
+                    // Stop checking after 5 seconds
+                    setTimeout(() => clearInterval(checkRateLimit), 5000);
+                }
+            }, 500);
+        });
+    }
 });
+
+// Render tier badge in header
+async function renderTierBadge() {
+    try {
+        // Check if rateLimit is available
+        if (typeof rateLimit === 'undefined') {
+            return;
+        }
+
+        const tierInfo = await rateLimit.getUserTier();
+        const tier = tierInfo.tier || 0;
+
+        // Only show badge for tier 1 (Supporter) or tier 2 (Premium)
+        if (tier === 0) {
+            return;
+        }
+
+        const tierConfig = rateLimit.TIER_CONFIG[tier];
+        const badgeText = tier === 1 ? 'Supporter' : tier === 2 ? 'Premium' : '';
+
+        // Find logo element
+        const logo = document.querySelector('.logo');
+        if (!logo) return;
+
+        // Check if badge already exists
+        let badge = logo.querySelector('.tier-badge-header');
+        if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'tier-badge-header';
+            badge.style.cssText = 'display:inline-flex;align-items:center;margin-left:8px;padding:2px 8px;border-radius:12px;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;';
+            logo.appendChild(badge);
+        }
+
+        // Set badge style and text based on tier
+        if (tier === 1) {
+            badge.style.background = 'linear-gradient(135deg, #fbbf24, #f59e0b)';
+            badge.style.color = 'white';
+        } else if (tier === 2) {
+            badge.style.background = 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
+            badge.style.color = 'white';
+        }
+
+        badge.textContent = badgeText;
+    } catch (error) {
+        console.error('Error rendering tier badge:', error);
+    }
+}
 
 // Export functions
 window.utils = {
@@ -212,5 +288,6 @@ window.utils = {
     getFileTypeBadge,
     getStatusBadge,
     escapeHtml,
-    createFileCard
+    createFileCard,
+    renderTierBadge
 };

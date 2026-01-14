@@ -25,7 +25,7 @@ var CONFIG = {
   RATE_LIMIT: {
     TIER_0_MAX: 30,    // Free tier: 30 uploads/month
     TIER_1_MAX: 50,    // Supporter tier: 50 uploads/month (after 5 LootLabs)
-    TIER_2_MAX: 100,   // Premium tier: 100 uploads/month (after 50 LootLabs)
+    TIER_2_MAX: 999999,   // Premium tier: Unlimited (999999) uploads/month (after 50 LootLabs)
     TIER_1_DURATION_DAYS: 45,   // 1.5 months
     TIER_2_DURATION_DAYS: 365,  // 1 year
     TIER_1_REQUIREMENT: 5,      // LootLabs completions for Tier 1

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>Thank You - FileShare</title>
+    <title>Verifying Task - FileShare</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -170,7 +170,6 @@
 <body>
     <div class="callback-container">
         <div class="card callback-card" id="callback-content">
-            <!-- Content will be injected by JavaScript -->
             <div class="callback-icon loading">⏳</div>
             <h1 class="callback-title">Verifying...</h1>
             <p class="callback-message">Please wait while we verify your completion.</p>
@@ -187,79 +186,39 @@
             const container = document.getElementById('callback-content');
 
             try {
-                // Xu ly callback
+                // Process callback from LootLabs
                 const result = await lootlabs.handleCallback();
 
                 if (result.success) {
-                    // Thanh cong
+                    // Success: fetch latest tier info
                     const tierInfo = await rateLimit.getUserTier();
-                    const tierConfig = rateLimit.TIER_CONFIG[tierInfo.tier];
+                    const goal = localStorage.getItem('lootlabs_target_goal') || '5';
 
-                    // Tinh progress den tier tiep theo
-                    let nextTier, required, current, progress;
-                    if (tierInfo.tier < 1) {
-                        nextTier = 'Supporter';
-                        required = lootlabs.CONFIG.TIER_1_REQUIREMENT;
-                        current = tierInfo.lootlabsCount;
-                        progress = Math.min(100, Math.round((current / required) * 100));
-                    } else if (tierInfo.tier < 2) {
-                        nextTier = 'Premium';
-                        required = lootlabs.CONFIG.TIER_2_REQUIREMENT;
-                        current = tierInfo.lootlabsCount;
-                        progress = Math.min(100, Math.round((current / required) * 100));
+                    // Store result in sessionStorage so status pages can verify
+                    const payload = {
+                        success: true,
+                        goal: goal,
+                        lootlabsCount: tierInfo.lootlabsCount,
+                        tier: tierInfo.tier,
+                        timestamp: Date.now()
+                    };
+                    sessionStorage.setItem('lootlabs_last_result', JSON.stringify(payload));
+
+                    // Redirect to the appropriate status page
+                    if (goal === '50') {
+                        window.location.href = 'lootlabs-50-status.html';
                     } else {
-                        nextTier = null;
-                        progress = 100;
+                        window.location.href = 'lootlabs-5-status.html';
                     }
-
-                    container.innerHTML = `
-                        <div class="callback-icon success">✓</div>
-                        <h1 class="callback-title">Thank You!</h1>
-                        <p class="callback-message">Your support has been recorded successfully. You're helping keep FileShare free and running!</p>
-                        
-                        <div class="tier-badge tier-${tierInfo.tier}">
-                            ${tierInfo.tier === 0 ? '🆓' : tierInfo.tier === 1 ? '🌟' : '👑'}
-                            ${tierConfig.name}
-                        </div>
-                        
-                        <div class="callback-stats">
-                            <div class="stat-item">
-                                <div class="stat-value">${tierInfo.lootlabsCount}</div>
-                                <div class="stat-label">Total Completions</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value">${tierConfig.max}</div>
-                                <div class="stat-label">Uploads/Month</div>
-                            </div>
-                        </div>
-                        
-                        ${nextTier ? `
-                            <div class="progress-to-next">
-                                <div class="progress-label">Progress to ${nextTier}: ${current}/${required}</div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: ${progress}%"></div>
-                                </div>
-                            </div>
-                        ` : `
-                            <p style="color: var(--success);">🎉 You've reached the maximum tier!</p>
-                        `}
-                        
-                        <div class="callback-actions">
-                            <a href="upload.html" class="btn btn-primary">Continue to Upload</a>
-                            <a href="${lootlabs.buildLootLabsUrl()}" class="btn btn-secondary" target="_blank">
-                                Complete Another Task
-                            </a>
-                        </div>
-                    `;
                 } else {
-                    // Loi
+                    // Verification failed
                     container.innerHTML = `
                         <div class="callback-icon error">✕</div>
                         <h1 class="callback-title">Verification Failed</h1>
                         <p class="callback-message">${result.error || 'Unable to verify your completion. This might happen if you completed too quickly or the session expired.'}</p>
                         
                         <div class="callback-actions">
-                            <a href="${lootlabs.buildLootLabsUrl()}" class="btn btn-primary" target="_blank">Try Again</a>
+                            <a href="donate.html" class="btn btn-primary">Back to Support Page</a>
                             <a href="upload.html" class="btn btn-secondary">Back to Upload</a>
                         </div>
                     `;

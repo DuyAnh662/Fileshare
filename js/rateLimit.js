@@ -8,14 +8,14 @@ const rateLimit = {
     // ==================
 
     TIER_CONFIG: {
-        0: { max: 30, name: 'Free' },
-        1: { max: 50, name: 'Supporter', durationDays: 45 },   // 1.5 months
-        2: { max: 100, name: 'Premium', durationDays: 365 }    // 1 year
+        0: { max: CONFIG.RATE_LIMIT.TIER_0_MAX, name: 'Free' },
+        1: { max: CONFIG.RATE_LIMIT.TIER_1_MAX, name: 'Supporter', durationDays: CONFIG.RATE_LIMIT.TIER_1_DURATION_DAYS },
+        2: { max: CONFIG.RATE_LIMIT.TIER_2_MAX, name: 'Premium (∞)', durationDays: CONFIG.RATE_LIMIT.TIER_2_DURATION_DAYS }
     },
 
     TIER_REQUIREMENTS: {
-        1: 5,   // 5 LootLabs runs -> Tier 1
-        2: 50   // 50 LootLabs runs -> Tier 2
+        1: CONFIG.RATE_LIMIT.TIER_1_REQUIREMENT,
+        2: CONFIG.RATE_LIMIT.TIER_2_REQUIREMENT
     },
 
     // ==================
@@ -144,6 +144,19 @@ const rateLimit = {
         }
     },
 
+    // Check if should show support UI
+    async shouldShowSupportUI() {
+        const { tier, expiresAt } = await this.getUserTier();
+        if (tier > 0) {
+            // Check if expired (should be handled by getUserTier, but double check)
+            if (expiresAt && new Date(expiresAt) < new Date()) {
+                return true; // Expired, so show UI
+            }
+            return false; // Valid tier, hide UI
+        }
+        return true; // Free tier, show UI
+    },
+
     // Reset tier when expired
     async _resetExpiredTier(fingerprint) {
         try {
@@ -175,7 +188,7 @@ const rateLimit = {
             const ip = await this.getClientIP();
             const fingerprint = this.getClientFingerprint();
             const monthKey = this.getCurrentMonthKey();
-            const { tier } = await this.getUserTier();
+            const { tier, lootlabsCount } = await this.getUserTier();
             const maxUploads = this.getMaxUploads(tier);
 
             // Query current usage
@@ -193,7 +206,8 @@ const rateLimit = {
                     remaining: maxUploads,
                     used: 0,
                     max: maxUploads,
-                    tier: tier
+                    tier: tier,
+                    lootlabsCount: lootlabsCount
                 };
             }
 
@@ -206,12 +220,13 @@ const rateLimit = {
                 remaining: Math.max(0, remaining),
                 used: data.upload_count,
                 max: effectiveMax,
-                tier: tier
+                tier: tier,
+                lootlabsCount: lootlabsCount
             };
         } catch (error) {
             console.error('Error checking upload limit:', error);
             // Fallback: allow upload to avoid blocking user
-            return { allowed: true, remaining: 30, used: 0, max: 30, tier: 0 };
+            return { allowed: true, remaining: 30, used: 0, max: 30, tier: 0, lootlabsCount: 0 };
         }
     },
 
@@ -301,7 +316,10 @@ const rateLimit = {
                         <div class="status-progress" style="width: ${100 - percentage}%"></div>
                     </div>
                     <div class="status-count">
-                        <strong>${status.remaining}</strong> / ${status.max} ${t('rateLimit.thisMonth') || 'this month'}
+                        <strong>${status.tier === 2 ? '∞' : status.remaining}</strong> / ${status.tier === 2 ? '∞' : status.max} ${t('rateLimit.thisMonth') || 'this month'}
+                    </div>
+                    <div class="status-count" style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">
+                        ${t('rateLimit.totalCompletions') || 'LootLabs completions'}: <strong>${status.lootlabsCount}</strong>
                     </div>
                     ${isEmpty ? `
                         <div class="status-upgrade">

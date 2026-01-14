@@ -16,15 +16,12 @@ const lootlabs = {
         // Only use for development/testing
         API_TOKEN: 'YOUR_LOOTLABS_API_TOKEN',
 
-        // Callback URL when user completes
-        CALLBACK_URL: window.location.origin + '/lootlabs-callback.html',
-
         // Minimum completion time (seconds) - anti-bypass
         MIN_COMPLETION_TIME: 30,
 
         // Tier thresholds
-        TIER_1_REQUIREMENT: 5,
-        TIER_2_REQUIREMENT: 50
+        TIER_1_REQUIREMENT: CONFIG.RATE_LIMIT.TIER_1_REQUIREMENT,
+        TIER_2_REQUIREMENT: CONFIG.RATE_LIMIT.TIER_2_REQUIREMENT
     },
 
     // ==================
@@ -68,9 +65,22 @@ const lootlabs = {
     // ==================
 
     // Build LootLabs URL with callback and anti-bypass
-    buildLootLabsUrl() {
+    // mode: 'tier1' (5 tasks) or 'tier2' (50 tasks)
+    buildLootLabsUrl(mode) {
         const token = this.generateSessionToken();
-        const callbackUrl = `${this.CONFIG.CALLBACK_URL}?token=${encodeURIComponent(token)}`;
+
+        // Determine callback URL based on mode
+        let callbackPage = 'lootlabs-callback.html'; // Fallback
+
+        if (mode === 'tier2') {
+            callbackPage = 'lootlabs-50-status.html';
+            localStorage.setItem('lootlabs_target_goal', '50');
+        } else {
+            callbackPage = 'lootlabs-5-status.html';
+            localStorage.setItem('lootlabs_target_goal', '5');
+        }
+
+        const callbackUrl = `${window.location.origin}/${callbackPage}?token=${encodeURIComponent(token)}`;
 
         // If API token exists, use encrypted redirect (anti-bypass)
         // Otherwise, use normal URL
@@ -83,6 +93,12 @@ const lootlabs = {
         // Fallback: Use direct redirect URL
         // LootLabs will redirect to this URL after completion
         return this.CONFIG.BASE_URL;
+    },
+
+    // Start a LootLabs task flow for a specific goal
+    startTask(mode) {
+        const url = this.buildLootLabsUrl(mode);
+        window.open(url, '_blank');
     },
 
     // ==================
@@ -166,12 +182,12 @@ const lootlabs = {
             if (totalCount >= this.CONFIG.TIER_2_REQUIREMENT) {
                 newTier = 2;
                 const date = new Date();
-                date.setDate(date.getDate() + 365); // 1 year
+                date.setDate(date.getDate() + CONFIG.RATE_LIMIT.TIER_2_DURATION_DAYS); // Premium duration
                 expiresAt = date.toISOString();
             } else if (totalCount >= this.CONFIG.TIER_1_REQUIREMENT) {
                 newTier = 1;
                 const date = new Date();
-                date.setDate(date.getDate() + 45); // 1.5 months
+                date.setDate(date.getDate() + CONFIG.RATE_LIMIT.TIER_1_DURATION_DAYS); // Supporter duration
                 expiresAt = date.toISOString();
             }
 
@@ -285,7 +301,7 @@ const lootlabs = {
                             
                             <div class="tier-card tier-premium ${currentTier >= 2 ? 'tier-unlocked' : ''}">
                                 <div class="tier-name">👑 Premium</div>
-                                <div class="tier-benefit">100 ${t('donate.uploadsPerMonth') || 'uploads/month'}</div>
+                                <div class="tier-benefit">∞ ${t('donate.uploadsPerMonth') || 'uploads/month'}</div>
                                 <div class="tier-requirement">${this.CONFIG.TIER_2_REQUIREMENT} ${t('donate.completions') || 'completions'}</div>
                                 <div class="tier-duration">${t('donate.validFor') || 'Valid for'} 1 ${t('donate.year') || 'year'}</div>
                                 ${currentTier >= 2 ? '<div class="tier-status">✓ Unlocked</div>' : ''}
@@ -341,7 +357,13 @@ const lootlabs = {
     // Handle LootLabs callback (called from callback page)
     async handleCallback() {
         const urlParams = new URLSearchParams(window.location.search);
-        const token = urlParams.get('token');
+        let token = urlParams.get('token');
+
+        // Fallback: if LootLabs does not return token in URL,
+        // use the last session token stored in localStorage
+        if (!token) {
+            token = localStorage.getItem('lootlabs_session_token');
+        }
 
         if (!token) {
             return { success: false, error: 'No token provided' };

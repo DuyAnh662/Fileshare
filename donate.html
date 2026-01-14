@@ -388,242 +388,268 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="donate-hero">
+    <!-- Active Status (Hidden by default) -->
+    <section class="active-status-section" id="active-status-msg"
+        style="display: none; padding: 100px 0; text-align: center;">
         <div class="container">
-            <div class="donate-hero-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2">
-                    <path
-                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            <div class="donate-hero-icon" style="background: var(--success);">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>
             </div>
-            <h1 class="donate-hero-title">Support FileShare</h1>
+            <h1 class="donate-hero-title">You are a VIP Member!</h1>
             <p class="donate-hero-subtitle">
-                Unlock more uploads by completing simple tasks. Help keep FileShare running and get rewarded —
-                it's completely free, no payment required.
+                Thank you for your support. Your package is currently active and you have access to increased upload
+                limits.
+                <br>No further action is needed at this time.
             </p>
-            <div class="free-badge">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                    <polyline points="22 4 12 14.01 9 11.01" />
-                </svg>
-                100% FREE — NO PAYMENT REQUIRED
+            <div style="margin-top: 32px;">
+                <a href="upload.html" class="btn btn-primary cta-btn">Go to Upload</a>
             </div>
         </div>
     </section>
 
-    <!-- Tiers Section -->
-    <section class="tiers-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>Choose Your Tier</h2>
-                <p class="text-muted">Complete tasks to unlock more uploads each month</p>
+    <div id="donation-content">
+        <!-- Hero Section -->
+        <section class="donate-hero">
+            <div class="container">
+                <div class="donate-hero-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path
+                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
+                </div>
+                <h1 class="donate-hero-title">Support FileShare</h1>
+                <p class="donate-hero-subtitle">
+                    Unlock more uploads by completing simple tasks. Help keep FileShare running and get rewarded —
+                    it's completely free, no payment required.
+                </p>
+                <div class="free-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
+                    </svg>
+                    100% FREE — NO PAYMENT REQUIRED
+                </div>
             </div>
+        </section>
 
-            <div class="tiers-grid">
-                <!-- Supporter Tier -->
-                <div class="tier-feature-card">
-                    <div class="tier-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <polygon
-                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                        </svg>
-                    </div>
-                    <h3 class="tier-title">Supporter</h3>
-                    <div class="tier-uploads">50</div>
-                    <div class="tier-uploads-label">uploads per month</div>
+        <!-- Tiers Section -->
+        <section class="tiers-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Choose Your Tier</h2>
+                    <p class="text-muted">Complete tasks to unlock more uploads each month</p>
+                </div>
 
-                    <div class="tier-requirement">
-                        <div class="tier-requirement-label">Requirement</div>
-                        <div class="tier-requirement-value">Complete 5 tasks</div>
-                    </div>
-
-                    <div class="tier-duration">Valid for 1.5 months after reaching goal</div>
-
-                    <div class="tier-features">
-                        <div class="tier-feature-item">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="20 6 9 17 4 12" />
+                <div class="tiers-grid">
+                    <!-- Supporter Tier -->
+                    <div class="tier-feature-card">
+                        <div class="tier-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <polygon
+                                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
                             </svg>
-                            <span>50 file uploads per month</span>
                         </div>
-                        <div class="tier-feature-item">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                            <span>~30 seconds per task</span>
+                        <h3 class="tier-title">Supporter</h3>
+                        <div class="tier-uploads">50</div>
+                        <div class="tier-uploads-label">uploads per month</div>
+
+                        <div class="tier-requirement">
+                            <div class="tier-requirement-label">Requirement</div>
+                            <div class="tier-requirement-value">Complete 5 tasks</div>
                         </div>
-                        <div class="tier-feature-item">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="20 6 9 17 4 12" />
+
+                        <div class="tier-duration">Valid for 1.5 months after reaching goal</div>
+
+                        <div class="tier-features">
+                            <div class="tier-feature-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                                <span>50 file uploads per month</span>
+                            </div>
+                            <div class="tier-feature-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                                <span>~30 seconds per task</span>
+                            </div>
+                            <div class="tier-feature-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                                <span>Support our free service</span>
+                            </div>
+                        </div>
+
+                        <button class="btn tier-btn secondary" onclick="startLootLabs5()">
+                            Start Earning →
+                        </button>
+                    </div>
+
+                    <!-- Premium Tier -->
+                    <div class="tier-feature-card featured">
+                        <div class="tier-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                                <path d="M2 17l10 5 10-5" />
+                                <path d="M2 12l10 5 10-5" />
                             </svg>
-                            <span>Support our free service</span>
+                        </div>
+                        <h3 class="tier-title">Premium</h3>
+                        <div class="tier-uploads">∞</div>
+                        <div class="tier-uploads-label">uploads per month</div>
+
+                        <div class="tier-requirement">
+                            <div class="tier-requirement-label">Requirement</div>
+                            <div class="tier-requirement-value">Complete 50 tasks</div>
+                        </div>
+
+                        <div class="tier-duration">Valid for 1 year after reaching goal</div>
+
+                        <div class="tier-features">
+                            <div class="tier-feature-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                                <span>∞ file uploads per month</span>
+                            </div>
+                            <div class="tier-feature-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                                <span>Long-term supporter status</span>
+                            </div>
+                            <div class="tier-feature-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                                <span>Maximum upload capacity</span>
+                            </div>
+                        </div>
+
+                        <button class="btn tier-btn primary" onclick="startLootLabs50()">
+                            Start Earning →
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works -->
+        <section class="how-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>How It Works</h2>
+                    <p class="text-muted">Simple steps to unlock more uploads</p>
+                </div>
+
+                <div class="how-steps">
+                    <div class="how-step">
+                        <div class="how-step-number">1</div>
+                        <h4 class="how-step-title">Click Start</h4>
+                        <p class="how-step-desc">Click the button above or on the upload page to begin.</p>
+                    </div>
+
+                    <div class="how-step">
+                        <div class="how-step-number">2</div>
+                        <h4 class="how-step-title">View Content</h4>
+                        <p class="how-step-desc">Watch or interact with content. Takes about 30 seconds.</p>
+                    </div>
+
+                    <div class="how-step">
+                        <div class="how-step-number">3</div>
+                        <h4 class="how-step-title">Get Credit</h4>
+                        <p class="how-step-desc">Your completion is automatically recorded.</p>
+                    </div>
+
+                    <div class="how-step">
+                        <div class="how-step-number">4</div>
+                        <h4 class="how-step-title">Unlock More</h4>
+                        <p class="how-step-desc">Reach 5 or 50 completions to upgrade your tier!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Frequently Asked Questions</h2>
+                </div>
+
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <div class="faq-question">Is this really free?</div>
+                        <div class="faq-answer">
+                            Yes, 100% free. You don't pay anything. You simply view content, and in return,
+                            you get more upload capacity. The ad revenue helps us keep FileShare running.
                         </div>
                     </div>
 
-                    <button class="btn tier-btn secondary" onclick="startLootLabsTask()">
-                        Start Earning →
+                    <div class="faq-item">
+                        <div class="faq-question">How long does each task take?</div>
+                        <div class="faq-answer">
+                            Each task takes approximately 30 seconds to complete. You can do multiple tasks whenever you
+                            have time.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">When does my tier expire?</div>
+                        <div class="faq-answer">
+                            Supporter tier (5 completions) lasts for 1.5 months. Premium tier (50 completions) lasts for
+                            1
+                            full year.
+                            After expiration, you return to the free tier with 30 uploads/month.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">Can I upgrade from Supporter to Premium?</div>
+                        <div class="faq-answer">
+                            Yes! Your completion count is saved permanently. If you continue completing tasks to reach
+                            50,
+                            you'll be upgraded to Premium tier automatically.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">Why should I support FileShare?</div>
+                        <div class="faq-answer">
+                            FileShare is a free service that costs money to run. By completing tasks, you help cover
+                            server
+                            costs
+                            and keep the service free for everyone. Plus, you get more uploads as a thank you!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="container">
+                <h2 class="cta-title">Ready to Get Started?</h2>
+                <p class="text-muted">Start completing tasks now and unlock more uploads — it's free!</p>
+
+                <div class="cta-buttons">
+                    <button class="btn btn-primary cta-btn" onclick="startLootLabs5()">
+                        Start Now — It's Free
                     </button>
-                </div>
-
-                <!-- Premium Tier -->
-                <div class="tier-feature-card featured">
-                    <div class="tier-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                            <path d="M2 17l10 5 10-5" />
-                            <path d="M2 12l10 5 10-5" />
-                        </svg>
-                    </div>
-                    <h3 class="tier-title">Premium</h3>
-                    <div class="tier-uploads">100</div>
-                    <div class="tier-uploads-label">uploads per month</div>
-
-                    <div class="tier-requirement">
-                        <div class="tier-requirement-label">Requirement</div>
-                        <div class="tier-requirement-value">Complete 50 tasks</div>
-                    </div>
-
-                    <div class="tier-duration">Valid for 1 year after reaching goal</div>
-
-                    <div class="tier-features">
-                        <div class="tier-feature-item">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                            <span>100 file uploads per month</span>
-                        </div>
-                        <div class="tier-feature-item">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                            <span>Long-term supporter status</span>
-                        </div>
-                        <div class="tier-feature-item">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                            <span>Maximum upload capacity</span>
-                        </div>
-                    </div>
-
-                    <button class="btn tier-btn primary" onclick="startLootLabsTask()">
-                        Start Earning →
-                    </button>
+                    <a href="upload.html" class="btn btn-secondary cta-btn">
+                        Go to Upload Page
+                    </a>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- How It Works -->
-    <section class="how-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>How It Works</h2>
-                <p class="text-muted">Simple steps to unlock more uploads</p>
-            </div>
-
-            <div class="how-steps">
-                <div class="how-step">
-                    <div class="how-step-number">1</div>
-                    <h4 class="how-step-title">Click Start</h4>
-                    <p class="how-step-desc">Click the button above or on the upload page to begin.</p>
-                </div>
-
-                <div class="how-step">
-                    <div class="how-step-number">2</div>
-                    <h4 class="how-step-title">View Content</h4>
-                    <p class="how-step-desc">Watch or interact with content. Takes about 30 seconds.</p>
-                </div>
-
-                <div class="how-step">
-                    <div class="how-step-number">3</div>
-                    <h4 class="how-step-title">Get Credit</h4>
-                    <p class="how-step-desc">Your completion is automatically recorded.</p>
-                </div>
-
-                <div class="how-step">
-                    <div class="how-step-number">4</div>
-                    <h4 class="how-step-title">Unlock More</h4>
-                    <p class="how-step-desc">Reach 5 or 50 completions to upgrade your tier!</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ Section -->
-    <section class="faq-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>Frequently Asked Questions</h2>
-            </div>
-
-            <div class="faq-list">
-                <div class="faq-item">
-                    <div class="faq-question">Is this really free?</div>
-                    <div class="faq-answer">
-                        Yes, 100% free. You don't pay anything. You simply view content, and in return,
-                        you get more upload capacity. The ad revenue helps us keep FileShare running.
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">How long does each task take?</div>
-                    <div class="faq-answer">
-                        Each task takes approximately 30 seconds to complete. You can do multiple tasks whenever you
-                        have time.
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">When does my tier expire?</div>
-                    <div class="faq-answer">
-                        Supporter tier (5 completions) lasts for 1.5 months. Premium tier (50 completions) lasts for 1
-                        full year.
-                        After expiration, you return to the free tier with 30 uploads/month.
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">Can I upgrade from Supporter to Premium?</div>
-                    <div class="faq-answer">
-                        Yes! Your completion count is saved permanently. If you continue completing tasks to reach 50,
-                        you'll be upgraded to Premium tier automatically.
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">Why should I support FileShare?</div>
-                    <div class="faq-answer">
-                        FileShare is a free service that costs money to run. By completing tasks, you help cover server
-                        costs
-                        and keep the service free for everyone. Plus, you get more uploads as a thank you!
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta-section">
-        <div class="container">
-            <h2 class="cta-title">Ready to Get Started?</h2>
-            <p class="text-muted">Start completing tasks now and unlock more uploads — it's free!</p>
-
-            <div class="cta-buttons">
-                <button class="btn btn-primary cta-btn" onclick="startLootLabsTask()">
-                    Start Now — It's Free
-                </button>
-                <a href="upload.html" class="btn btn-secondary cta-btn">
-                    Go to Upload Page
-                </a>
-            </div>
-        </div>
-    </section>
+        </section>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
@@ -667,11 +693,27 @@
     <script src="js/rateLimit.js"></script>
     <script src="js/lootlabs.js"></script>
     <script>
-        function startLootLabsTask() {
-            // Open LootLabs link directly
-            const url = lootlabs.buildLootLabsUrl();
-            window.open(url, '_blank');
+        function startLootLabs5() {
+            lootlabs.startTask('tier1');
         }
+
+        function startLootLabs50() {
+            lootlabs.startTask('tier2');
+        }
+
+        async function initDonatePage() {
+            const shouldShow = await rateLimit.shouldShowSupportUI();
+
+            if (shouldShow) {
+                document.getElementById('donation-content').style.display = 'block';
+                document.getElementById('active-status-msg').style.display = 'none';
+            } else {
+                document.getElementById('donation-content').style.display = 'none';
+                document.getElementById('active-status-msg').style.display = 'block';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initDonatePage);
     </script>
 </body>
 

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Supporter Progress - FileShare</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="js/head.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="callback-container"
+        style="min-height: 100vh; display:flex; align-items:center; justify-content:center; padding:2rem; background:linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);">
+        <div class="card callback-card" id="supporter-content"
+            style="max-width:480px; text-align:center; padding:3rem 2rem;">
+            <div class="callback-icon loading"
+                style="width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:2.5rem;background:linear-gradient(135deg,#3b82f6,#2563eb);color:white;">
+                ⏳
+            </div>
+            <h1 class="callback-title" style="font-size:1.75rem;margin-bottom:0.75rem;color:var(--text-primary);">
+                Checking your progress...
+            </h1>
+            <p class="callback-message" style="color:var(--text-muted);margin-bottom:2rem;line-height:1.6;">
+                Please wait a moment.
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/rateLimit.js"></script>
+    <script src="js/lootlabs.js"></script>
+    <script>
+        async function initPage() {
+            const container = document.getElementById('supporter-content');
+
+            // Check if we have a token in the URL (callback from LootLabs)
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+
+            if (token) {
+                // Processing new completion
+                try {
+                    const result = await lootlabs.handleCallback();
+                    if (result.success) {
+                        // Success!
+                        const payload = {
+                            success: true,
+                            goal: '5',
+                            lootlabsCount: result.newCount, // Use returned count
+                            tier: result.newTier,           // Use returned tier
+                            timestamp: Date.now()
+                        };
+                        sessionStorage.setItem('lootlabs_last_result', JSON.stringify(payload));
+
+                        // Clean URL
+                        window.history.replaceState({}, document.title, window.location.pathname);
+
+                        // Render success
+                        renderStatus(payload);
+                    } else {
+                        // Failed
+                        renderError(result.error);
+                    }
+                } catch (e) {
+                    renderError(e.message);
+                }
+            } else {
+                // No token, check if we have a recent result to show
+                const raw = sessionStorage.getItem('lootlabs_last_result');
+                if (raw) {
+                    const data = JSON.parse(raw);
+                    // Basic anti-bypass: must be recent and correct goal
+                    const now = Date.now();
+                    const maxAgeMs = 5 * 60 * 1000; // 5 minutes
+
+                    if (data.goal === '5' && (now - data.timestamp) < maxAgeMs) {
+                        renderStatus(data);
+                    } else {
+                        renderAccessDenied();
+                    }
+                } else {
+                    renderAccessDenied();
+                }
+            }
+        }
+
+        async function renderStatus(data) {
+            const container = document.getElementById('supporter-content');
+
+            // Get authoritative count (though data.lootlabsCount is usually fresh enough)
+            const tierInfo = await rateLimit.getUserTier();
+            const total = tierInfo.lootlabsCount || 0;
+            const current = Math.min(5, total);
+            const progress = Math.min(100, Math.round((current / 5) * 100));
+            const reached = total >= 5;
+
+            container.innerHTML = `
+            <div class="callback-icon success" style="width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:2.5rem;background:linear-gradient(135deg,#10b981,#059669);color:white;">
+                ✓
+            </div>
+            <h1 class="callback-title" style="font-size:1.75rem;margin-bottom:0.75rem;color:var(--text-primary);">
+                Supporter progress
+            </h1>
+            <p class="callback-message" style="color:var(--text-muted);margin-bottom:1.5rem;line-height:1.6;">
+                You have completed <strong>${current}/5</strong> tasks.
+            </p>
+            <div class="progress-to-next" style="margin-top:1rem;padding:1rem;background:var(--bg-tertiary);border-radius:8px;">
+                <div class="progress-label" style="font-size:0.875rem;color:var(--text-muted);margin-bottom:0.5rem;">
+                    Progress to Supporter (50 uploads per month)
+                </div>
+                <div class="progress-bar" style="height:8px;background:var(--bg-primary);border-radius:4px;overflow:hidden;">
+                    <div class="progress-fill" style="height:100%;width:${progress}%;background:linear-gradient(90deg,var(--primary),var(--primary-dark));"></div>
+                </div>
+            </div>
+            <p style="margin-top:1.25rem;color:${reached ? 'var(--success)' : 'var(--text-secondary)'};">
+                ${reached
+                    ? 'Great! Your Supporter package (50 uploads/month) is now active on your account.'
+                    : 'Complete 5 tasks in total to unlock the Supporter package (50 uploads/month).'}
+            </p>
+            <div class="callback-actions" style="display:flex;flex-direction:column;gap:0.75rem;margin-top:1.5rem;">
+                <a href="upload.html" class="btn btn-primary">Go to Upload page</a>
+                <a href="donate.html" class="btn btn-secondary">Back to Support page</a>
+            </div>
+            `;
+        }
+
+        function renderError(msg) {
+            const container = document.getElementById('supporter-content');
+            container.innerHTML = `
+            <div class="callback-icon error" style="width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:2.5rem;background:linear-gradient(135deg,#ef4444,#dc2626);color:white;">
+                ✕
+            </div>
+            <h1 class="callback-title">Verification Failed</h1>
+            <p class="callback-message" style="color:var(--text-muted);margin-bottom:2rem;line-height:1.6;">
+                ${msg || 'Unable to verify your task completion.'}
+            </p>
+            <div class="callback-actions" style="display:flex;flex-direction:column;gap:0.75rem;">
+                <a href="donate.html" class="btn btn-primary">Try Again</a>
+            </div>
+            `;
+        }
+
+        function renderAccessDenied() {
+            const container = document.getElementById('supporter-content');
+            container.innerHTML = `
+            <div class="callback-icon error" style="width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:2.5rem;background:linear-gradient(135deg,#ef4444,#dc2626);color:white;">
+                ✕
+            </div>
+            <h1 class="callback-title">Access Denied</h1>
+            <p class="callback-message" style="color:var(--text-muted);margin-bottom:2rem;line-height:1.6;">
+                This page can only be opened after completing a task.
+            </p>
+            <div class="callback-actions" style="display:flex;flex-direction:column;gap:0.75rem;">
+                <a href="donate.html" class="btn btn-primary">Go back to Support page</a>
+            </div>
+            `;
+        }
+
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+
+</html>
