@@ -69,30 +69,24 @@ const lootlabs = {
     buildLootLabsUrl(mode) {
         const token = this.generateSessionToken();
 
-        // Determine callback URL based on mode
-        let callbackPage = 'lootlabs-callback.html'; // Fallback
+        let targetUrl = '';
 
         if (mode === 'tier2') {
-            callbackPage = 'lootlabs-50-status.html';
+            // Premium: 50 tasks
+            // User provided link: https://loot-link.com/s?qbozZeHL
+            // We append token for verification on return
+            targetUrl = 'https://loot-link.com/s?qbozZeHL';
             localStorage.setItem('lootlabs_target_goal', '50');
         } else {
-            callbackPage = 'lootlabs-5-status.html';
+            // Supporter: 5 tasks
+            // User provided link: https://loot-link.com/s?ICSel1Ee
+            targetUrl = 'https://loot-link.com/s?ICSel1Ee';
             localStorage.setItem('lootlabs_target_goal', '5');
         }
 
-        const callbackUrl = `${window.location.origin}/${callbackPage}?token=${encodeURIComponent(token)}`;
-
-        // If API token exists, use encrypted redirect (anti-bypass)
-        // Otherwise, use normal URL
-        if (this.CONFIG.API_TOKEN && this.CONFIG.API_TOKEN !== 'YOUR_LOOTLABS_API_TOKEN') {
-            // TODO: Call API to get encrypted URL
-            // In production, should call API from server-side
-            return `${this.CONFIG.BASE_URL}&data=${encodeURIComponent(callbackUrl)}`;
-        }
-
-        // Fallback: Use direct redirect URL
-        // LootLabs will redirect to this URL after completion
-        return this.CONFIG.BASE_URL;
+        // Append token to the URL so it can be passed back upon redirection
+        // We assume LootLabs forwards query parameters or the user has configured it to do so
+        return `${targetUrl}&token=${encodeURIComponent(token)}`;
     },
 
     // Start a LootLabs task flow for a specific goal
