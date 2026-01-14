@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fileshare-v2';
+const CACHE_NAME = 'fileshare-v3';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -42,16 +42,38 @@ function cleanResponse(response) {
   });
 }
 
-// Fetch event - serve from cache if available
+// Fetch event - Network First, fallback to Cache
 self.addEventListener('fetch', event => {
+  // Only handle GET requests
+  if (event.request.method !== 'GET') return;
+
   event.respondWith(
-    caches.match(event.request)
+    fetch(event.request)
       .then(response => {
-        // Return cached version or fetch from network
-        if (response) {
-          return cleanResponse(response);
+        // Response is valid?
+        if (!response || response.status !== 200 || response.type !== 'basic') {
+          return response;
         }
-        return fetch(event.request).then(cleanResponse);
+
+        // Clone response to cache it
+        const responseToCache = response.clone();
+
+        caches.open(CACHE_NAME)
+          .then(cache => {
+            cache.put(event.request, responseToCache);
+          });
+
+        return cleanResponse(response);
+      })
+      .catch(() => {
+        // Network failed, try to get from cache
+        return caches.match(event.request)
+          .then(response => {
+            if (response) {
+              return cleanResponse(response);
+            }
+            // Optional: Return offline page if needed
+          });
       })
   );
 });
