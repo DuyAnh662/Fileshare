@@ -1917,3 +1917,130 @@ a:hover {
     font-size: 1.25rem;
   }
 }
+
+/* Upload Status Professional Design */
+.upload-status {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 24px;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.upload-status:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+.upload-status.status-low {
+  border-color: var(--warning);
+  background: linear-gradient(to right, var(--bg-card) 98%, var(--warning-bg) 100%);
+}
+
+.upload-status.status-empty {
+  border-color: var(--danger);
+  background: linear-gradient(to right, var(--bg-card) 98%, var(--danger-bg) 100%);
+}
+
+.status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.status-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-bar-container {
+  height: 8px;
+  background: var(--bg-tertiary);
+  border-radius: 99px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  position: relative;
+}
+
+.status-progress {
+  height: 100%;
+  background: linear-gradient(90deg, var(--success) 0%, #34d399 100%);
+  border-radius: 99px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+/* Shimmer effect for progress bar */
+.status-progress::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transform: translateX(-100%);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.status-low .status-progress {
+  background: var(--warning);
+}
+
+.status-empty .status-progress {
+  background: var(--danger);
+  width: 100% !important;
+  /* Full red bar when empty/exhausted */
+}
+
+.status-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.status-count-large {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.status-count-sub {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-left: 4px;
+}
+
+.status-info {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  text-align: right;
+}
+
+.status-upgrade {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.status-upgrade p {
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}

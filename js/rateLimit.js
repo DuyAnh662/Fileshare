@@ -222,37 +222,66 @@ const rateLimit = {
     // Check if upload limit remains
     async checkUploadLimit() {
         try {
-            const ip = await this.getClientIP();
-            const fingerprint = this.getClientFingerprint();
-            const monthKey = this.getCurrentMonthKey();
-            const { tier, lootlabsCount } = await this.getUserTier();
-            const maxUploads = this.getMaxUploads(tier);
-
-            // Query current usage
-            const { data, error } = await db
-                .from('ip_upload_limits')
-                .select('upload_count, max_uploads')
-                .eq('ip_address', ip)
-                .eq('month_year', monthKey)
-                .single();
-
-            if (error || !data) {
-                // No record -> 100% allowed
-                return {
-                    allowed: true,
-                    remaining: maxUploads,
-                    used: 0,
-                    max: maxUploads,
-                    tier: tier,
-                    lootlabsCount: lootlabsCount
-                };
+            // OPTIMIZATION: Check cache for instant load
+            const cachedLimit = localStorage.getItem('upload_limit_cache');
+            if (cachedLimit) {
+                try {
+                    const parsed = JSON.parse(cachedLimit);
+                    const now = new Date();
+                    const cacheTime = new Date(parsed.timestamp);
+                    // Valid for 1 hour to avoid too many requests
+                    if ((now - cacheTime) < 3600000) {
+                        // Return cached but trigger background update if > 5 mins old
+                        if ((now - cacheTime) > 300000) {
+                            this._fetchAndCacheUploadLimit().catch(e => console.warn('Background fetch failed', e));
+                        }
+                        return parsed.data;
+                    }
+                } catch (e) {
+                    localStorage.removeItem('upload_limit_cache');
+                }
             }
 
+            return await this._fetchAndCacheUploadLimit();
+        } catch (error) {
+            console.error('Error checking upload limit:', error);
+            // Fallback: allow upload to avoid blocking user
+            return { allowed: true, remaining: 30, used: 0, max: 30, tier: 0, lootlabsCount: 0 };
+        }
+    },
+
+    // Fetch from DB and cache
+    async _fetchAndCacheUploadLimit() {
+        const ip = await this.getClientIP();
+        const monthKey = this.getCurrentMonthKey();
+        const { tier, lootlabsCount } = await this.getUserTier();
+        const maxUploads = this.getMaxUploads(tier);
+
+        // Query current usage
+        const { data, error } = await db
+            .from('ip_upload_limits')
+            .select('upload_count, max_uploads')
+            .eq('ip_address', ip)
+            .eq('month_year', monthKey)
+            .single();
+
+        let result;
+        if (error || !data) {
+            // No record -> 100% allowed
+            result = {
+                allowed: true,
+                remaining: maxUploads,
+                used: 0,
+                max: maxUploads,
+                tier: tier,
+                lootlabsCount: lootlabsCount
+            };
+        } else {
             // Update max_uploads if tier changed
             const effectiveMax = Math.max(data.max_uploads, maxUploads);
             const remaining = effectiveMax - data.upload_count;
 
-            return {
+            result = {
                 allowed: remaining > 0,
                 remaining: Math.max(0, remaining),
                 used: data.upload_count,
@@ -260,11 +289,15 @@ const rateLimit = {
                 tier: tier,
                 lootlabsCount: lootlabsCount
             };
-        } catch (error) {
-            console.error('Error checking upload limit:', error);
-            // Fallback: allow upload to avoid blocking user
-            return { allowed: true, remaining: 30, used: 0, max: 30, tier: 0, lootlabsCount: 0 };
         }
+
+        // Save to cache
+        localStorage.setItem('upload_limit_cache', JSON.stringify({
+            timestamp: new Date().toISOString(),
+            data: result
+        }));
+
+        return result;
     },
 
     // ==================
@@ -279,6 +312,9 @@ const rateLimit = {
             const monthKey = this.getCurrentMonthKey();
             const { tier } = await this.getUserTier();
             const maxUploads = this.getMaxUploads(tier);
+
+            // Invalidate cache immediately
+            localStorage.removeItem('upload_limit_cache');
 
             // Upsert: insert or update
             const { data: existing } = await db
@@ -335,10 +371,11 @@ const rateLimit = {
 
     // Render status HTML
     async renderUploadStatus() {
+        // This will now use cache if available -> instant load
         const status = await this.checkUploadLimit();
         const tierInfo = this.TIER_CONFIG[status.tier];
 
-        const percentage = Math.round((status.used / status.max) * 100);
+        const percentage = Math.min(100, Math.round((status.used / status.max) * 100));
         const isLow = status.remaining <= 5;
         const isEmpty = status.remaining === 0;
 
@@ -346,28 +383,42 @@ const rateLimit = {
             html: `
                 <div class="upload-status ${isEmpty ? 'status-empty' : isLow ? 'status-low' : 'status-ok'}">
                     <div class="status-header">
-                        <span class="status-label">${t('rateLimit.uploadsRemaining') || 'Uploads remaining'}</span>
-                        <span class="status-tier badge badge-${status.tier === 0 ? 'default' : 'success'}">${tierInfo.name}</span>
+                        <div class="status-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                            <span>${t('rateLimit.uploadsRemaining') || 'Monthly Upload Limit'}</span>
+                        </div>
+                        <span class="badge ${status.tier === 0 ? 'badge-default' : 'badge-success'}">${tierInfo.name}</span>
                     </div>
-                    <div class="status-bar">
-                        <div class="status-progress" style="width: ${100 - percentage}%"></div>
+                    
+                    <div class="status-bar-container">
+                        <div class="status-progress" style="width: ${percentage}%"></div>
                     </div>
-                    <div class="status-count">
-                        <strong>${status.tier === 2 ? '∞' : status.remaining}</strong> / ${status.tier === 2 ? '∞' : status.max} ${t('rateLimit.thisMonth') || 'this month'}
+                    
+                    <div class="status-meta">
+                        <div>
+                             <span class="status-count-large">${status.tier === 2 ? '∞' : status.remaining}</span>
+                             <span class="status-count-sub">remaining</span>
+                        </div>
+                        <div class="status-info">
+                            <div>Used: <strong>${status.used}</strong> / ${status.tier === 2 ? '∞' : status.max}</div>
+                            ${status.lootlabsCount > 0 ? `<div style="font-size: 0.75rem; opacity: 0.8; margin-top: 2px;">Tasks completed: ${status.lootlabsCount}</div>` : ''}
+                        </div>
                     </div>
-                    <div class="status-count" style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">
-                        ${t('rateLimit.totalCompletions') || 'LootLabs completions'}: <strong>${status.lootlabsCount}</strong>
-                    </div>
+
                     ${isEmpty ? `
                         <div class="status-upgrade">
-                            <p>${t('rateLimit.limitReached') || 'You have reached your upload limit.'}</p>
-                            <button class="btn btn-primary btn-sm" onclick="lootlabs.showDonateModal()">
-                                ${t('rateLimit.unlockMore') || 'Unlock more uploads'}
+                            <p>${t('rateLimit.limitReached') || 'You have reached your upload limit for this month.'}</p>
+                            <button class="btn btn-primary btn-sm w-100" onclick="lootlabs.showDonateModal()">
+                                ${t('rateLimit.unlockMore') || 'Unlock 100 More Uploads Free →'}
                             </button>
                         </div>
                     ` : isLow ? `
                         <div class="status-upgrade">
-                            <a href="#" onclick="lootlabs.showDonateModal(); return false;" class="text-primary">
+                            <a href="#" onclick="lootlabs.showDonateModal(); return false;" class="text-primary" style="font-size: 0.85rem; font-weight: 500;">
                                 ${t('rateLimit.runningLow') || 'Running low? Unlock more uploads →'}
                             </a>
                         </div>
