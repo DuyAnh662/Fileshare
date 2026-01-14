@@ -41,54 +41,48 @@
         async function initPage() {
             const container = document.getElementById('supporter-content');
 
-            // Check if we have a token in the URL (callback from LootLabs)
-            const urlParams = new URLSearchParams(window.location.search);
-            const token = urlParams.get('token');
+            // Try to handle callback first (checks URL token, then localStorage token)
+            try {
+                const result = await lootlabs.handleCallback();
+                if (result.success) {
+                    // Success!
+                    const payload = {
+                        success: true,
+                        goal: '5',
+                        lootlabsCount: result.newCount,
+                        tier: result.newTier,
+                        timestamp: Date.now()
+                    };
+                    sessionStorage.setItem('lootlabs_last_result', JSON.stringify(payload));
 
-            if (token) {
-                // Processing new completion
-                try {
-                    const result = await lootlabs.handleCallback();
-                    if (result.success) {
-                        // Success!
-                        const payload = {
-                            success: true,
-                            goal: '5',
-                            lootlabsCount: result.newCount, // Use returned count
-                            tier: result.newTier,           // Use returned tier
-                            timestamp: Date.now()
-                        };
-                        sessionStorage.setItem('lootlabs_last_result', JSON.stringify(payload));
+                    // Clean URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
 
-                        // Clean URL
-                        window.history.replaceState({}, document.title, window.location.pathname);
-
-                        // Render success
-                        renderStatus(payload);
-                    } else {
-                        // Failed
-                        renderError(result.error);
-                    }
-                } catch (e) {
-                    renderError(e.message);
+                    // Render success
+                    renderStatus(payload);
+                    return; // Stop here if success
                 }
-            } else {
-                // No token, check if we have a recent result to show
-                const raw = sessionStorage.getItem('lootlabs_last_result');
-                if (raw) {
-                    const data = JSON.parse(raw);
-                    // Basic anti-bypass: must be recent and correct goal
-                    const now = Date.now();
-                    const maxAgeMs = 5 * 60 * 1000; // 5 minutes
+                // If result.success is false, we fall through to check sessionStorage
+            } catch (e) {
+                // Ignore error here and try sessionStorage
+                console.log('Callback verify failed, checking storage:', e);
+            }
 
-                    if (data.goal === '5' && (now - data.timestamp) < maxAgeMs) {
-                        renderStatus(data);
-                    } else {
-                        renderAccessDenied();
-                    }
+            // Fallback: Check if we have a recent result to show in sessionStorage
+            const raw = sessionStorage.getItem('lootlabs_last_result');
+            if (raw) {
+                const data = JSON.parse(raw);
+                // Basic anti-bypass: must be recent and correct goal
+                const now = Date.now();
+                const maxAgeMs = 5 * 60 * 1000; // 5 minutes
+
+                if (data.goal === '5' && (now - data.timestamp) < maxAgeMs) {
+                    renderStatus(data);
                 } else {
                     renderAccessDenied();
                 }
+            } else {
+                renderAccessDenied();
             }
         }
 
