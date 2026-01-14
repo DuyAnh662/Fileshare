@@ -197,7 +197,7 @@ function initTheme() {
 document.addEventListener('DOMContentLoaded', () => {
     initMobileMenu();
     initTheme();
-    
+
     // Render tier badge after rateLimit is loaded
     // Use window load event to ensure all scripts are loaded
     if (document.readyState === 'complete') {
@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             renderTierBadge();
                         }
                     }, 100);
-                    
+
                     // Stop checking after 5 seconds
                     setTimeout(() => clearInterval(checkRateLimit), 5000);
                 }
@@ -244,7 +244,7 @@ async function renderTierBadge() {
             return;
         }
 
-        const tierConfig = rateLimit.TIER_CONFIG[tier];
+        // Use 'Supporter' or 'Premium' text
         const badgeText = tier === 1 ? 'Supporter' : tier === 2 ? 'Premium' : '';
 
         // Find logo element
@@ -256,17 +256,7 @@ async function renderTierBadge() {
         if (!badge) {
             badge = document.createElement('span');
             badge.className = 'tier-badge-header';
-            badge.style.cssText = 'display:inline-flex;align-items:center;margin-left:8px;padding:2px 8px;border-radius:12px;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;';
             logo.appendChild(badge);
-        }
-
-        // Set badge style and text based on tier
-        if (tier === 1) {
-            badge.style.background = 'linear-gradient(135deg, #fbbf24, #f59e0b)';
-            badge.style.color = 'white';
-        } else if (tier === 2) {
-            badge.style.background = 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
-            badge.style.color = 'white';
         }
 
         badge.textContent = badgeText;

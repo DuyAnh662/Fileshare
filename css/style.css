@@ -236,6 +236,7 @@ a:hover {
   font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: -0.03em;
+  position: relative;
 }
 
 .logo-icon {
@@ -453,6 +454,7 @@ a:hover {
   line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -471,26 +473,22 @@ a:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: 8px;
-  padding: 3px 10px;
-  border-radius: 99px;
-  /* Pill shape */
-  font-size: 0.65rem;
-  /* Compact */
-  font-weight: 700;
+  margin-left: 0;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.55rem;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  background: linear-gradient(135deg, #3ECF8E 0%, #2dbd7e 100%);
-  /* Supabase Green Gradient */
-  color: white;
-  box-shadow: 0 2px 5px rgba(62, 207, 142, 0.25);
-  position: relative;
+  letter-spacing: 0.1em;
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  position: absolute;
   top: -8px;
-  /* Superscript-like formatting */
-  right: -4px;
-  border: none;
+  right: -12px;
+  border: 1px solid var(--bg-primary);
   line-height: 1;
   z-index: 10;
+  box-shadow: var(--shadow-sm);
 }
 
 .tier-badge-header:hover {
