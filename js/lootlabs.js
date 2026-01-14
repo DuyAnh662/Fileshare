@@ -79,8 +79,8 @@ const lootlabs = {
             localStorage.setItem('lootlabs_target_goal', '50');
         } else {
             // Supporter: 5 tasks
-            // User provided link: https://loot-link.com/s?ICSel1Ee
-            targetUrl = 'https://loot-link.com/s?ICSel1Ee';
+            // User provided link: https://lootdest.org/s?ord2fkjR
+            targetUrl = 'https://lootdest.org/s?ord2fkjR';
             localStorage.setItem('lootlabs_target_goal', '5');
         }
 
