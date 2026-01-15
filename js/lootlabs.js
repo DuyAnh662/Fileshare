@@ -82,8 +82,8 @@ const lootlabs = {
             localStorage.setItem('lootlabs_target_goal', '50');
         } else if (mode === 'extra') {
             // Extra uploads: +5 uploads per completion
-            // Using the same link as Supporter
-            targetUrl = 'https://lootdest.org/s?ord2fkjR';
+            // User provided link that redirects to lootlabs-extra-callback.html
+            targetUrl = 'https://loot-link.com/s?9jF7nDI1';
             localStorage.setItem('lootlabs_target_goal', 'extra');
         } else {
             // Supporter: 5 tasks
