@@ -1613,13 +1613,22 @@ a:hover {
   border: none;
   color: var(--text-secondary);
   cursor: pointer;
-  padding: 8px;
+  padding: 6px;
   border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
   transition: var(--transition);
   margin-right: 8px;
+  overflow: visible;
+  width: 36px;
+  height: 36px;
+}
+
+.nav-icon-btn svg {
+  width: 24px;
+  height: 24px;
+  overflow: visible;
 }
 
 .nav-icon-btn:hover {
@@ -2043,4 +2052,590 @@ a:hover {
   margin-bottom: 12px;
   font-size: 0.9rem;
   color: var(--text-secondary);
+}
+
+/* ============================================
+   SCROLL ANIMATIONS & HERO EFFECTS
+   Linear.app inspired dynamic animations
+   ============================================ */
+
+/* Hero Section - Animated Gradient Background */
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-primary);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background:
+    radial-gradient(ellipse at 20% 30%, rgba(0, 0, 0, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(0, 0, 0, 0.02) 0%, transparent 50%),
+    radial-gradient(ellipse at 40% 80%, rgba(0, 0, 0, 0.02) 0%, transparent 40%);
+  animation: heroGradient 15s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+[data-theme="dark"] .hero::before {
+  background:
+    radial-gradient(ellipse at 20% 30%, rgba(255, 255, 255, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 40% 80%, rgba(255, 255, 255, 0.02) 0%, transparent 40%);
+}
+
+@keyframes heroGradient {
+
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  25% {
+    transform: translate(-10px, 15px) rotate(2deg);
+  }
+
+  50% {
+    transform: translate(10px, -10px) rotate(-1deg);
+  }
+
+  75% {
+    transform: translate(-5px, -15px) rotate(1deg);
+  }
+}
+
+/* Hero Floating Orbs */
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero-orb-1 {
+  width: 400px;
+  height: 400px;
+  background: rgba(0, 0, 0, 0.04);
+  top: -100px;
+  right: -100px;
+  animation: floatOrb 20s ease-in-out infinite;
+}
+
+.hero-orb-2 {
+  width: 300px;
+  height: 300px;
+  background: rgba(0, 0, 0, 0.03);
+  bottom: -50px;
+  left: -50px;
+  animation: floatOrb 18s ease-in-out infinite reverse;
+}
+
+.hero-orb-3 {
+  width: 200px;
+  height: 200px;
+  background: rgba(0, 0, 0, 0.02);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulseOrb 10s ease-in-out infinite;
+}
+
+[data-theme="dark"] .hero-orb-1 {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .hero-orb-2 {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme="dark"] .hero-orb-3 {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+@keyframes floatOrb {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  25% {
+    transform: translate(30px, -30px) scale(1.05);
+  }
+
+  50% {
+    transform: translate(-20px, 20px) scale(0.95);
+  }
+
+  75% {
+    transform: translate(20px, 30px) scale(1.02);
+  }
+}
+
+@keyframes pulseOrb {
+
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.3);
+    opacity: 0.3;
+  }
+}
+
+/* Hero content must be above orbs */
+.hero .container {
+  position: relative;
+  z-index: 1;
+}
+
+/* Hero Title Animation */
+.hero-title {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.hero-subtitle {
+  animation: fadeInUp 0.8s ease-out 0.1s both;
+}
+
+.hero-actions {
+  animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+/* ============================================
+   SCROLL REVEAL ANIMATIONS
+   ============================================ */
+
+/* Base state - hidden before animation */
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Animated state - when in viewport */
+.scroll-animate.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Scale variant */
+.scroll-animate-scale {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.6s ease-out,
+    transform 0.6s ease-out;
+}
+
+.scroll-animate-scale.animate-in {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Fade in from left */
+.scroll-animate-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.6s ease-out,
+    transform 0.6s ease-out;
+}
+
+.scroll-animate-left.animate-in {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Fade in from right */
+.scroll-animate-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity 0.6s ease-out,
+    transform 0.6s ease-out;
+}
+
+.scroll-animate-right.animate-in {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Stagger children animation */
+.stagger-children .scroll-animate-child {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.5s ease-out,
+    transform 0.5s ease-out;
+}
+
+.stagger-children.animate-in .scroll-animate-child {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.stagger-children.animate-in .scroll-animate-child:nth-child(1) {
+  transition-delay: 0ms;
+}
+
+.stagger-children.animate-in .scroll-animate-child:nth-child(2) {
+  transition-delay: 100ms;
+}
+
+.stagger-children.animate-in .scroll-animate-child:nth-child(3) {
+  transition-delay: 200ms;
+}
+
+.stagger-children.animate-in .scroll-animate-child:nth-child(4) {
+  transition-delay: 300ms;
+}
+
+.stagger-children.animate-in .scroll-animate-child:nth-child(5) {
+  transition-delay: 400ms;
+}
+
+.stagger-children.animate-in .scroll-animate-child:nth-child(6) {
+  transition-delay: 500ms;
+}
+
+/* Keyframe animations for hero */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   ENHANCED MICRO-INTERACTIONS
+   ============================================ */
+
+/* Card hover enhancement */
+.card {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+}
+
+/* Feature card icon animation */
+.feature-icon {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.3s ease;
+}
+
+.feature-card:hover .feature-icon {
+  transform: scale(1.1) rotate(-3deg);
+  background: var(--bg-hover);
+}
+
+/* Button pulse effect for primary buttons */
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.btn-primary:hover::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* Link hover underline animation */
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--text-primary);
+  transition: width 0.3s ease, left 0.3s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: calc(100% - 32px);
+  left: 16px;
+}
+
+/* Section title animation accent */
+.section-title {
+  display: inline-block;
+  position: relative;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 3px;
+  background: var(--text-primary);
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 0.5s ease 0.3s;
+}
+
+.scroll-animate.animate-in .section-title::after,
+.section-title::after {
+  opacity: 1;
+}
+
+/* Grid pattern background for hero (subtle) */
+.hero-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+[data-theme="dark"] .hero-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+/* Smooth scrollbar */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hover);
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .scroll-animate,
+  .scroll-animate-scale,
+  .scroll-animate-left,
+  .scroll-animate-right {
+    opacity: 1;
+    transform: none;
+  }
+}
+/* ============================================
+   CUSTOM SELECT DROPDOWN
+   Overrides native browser select for consistent styling
+   ============================================ */
+
+.custom-select-wrapper {
+  position: relative;
+  user-select: none;
+  width: 100%;
+}
+
+.custom-select {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Trigger Button (Looks like the input) */
+.custom-select__trigger {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition);
+  height: 48px;
+}
+
+/* Arrow Icon */
+.custom-select__arrow {
+  position: relative;
+  height: 20px;
+  width: 20px;
+  transition: var(--transition);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-select.open .custom-select__arrow {
+  transform: rotate(180deg);
+}
+
+.custom-select__trigger:hover {
+  border-color: var(--text-secondary);
+}
+
+.custom-select.open .custom-select__trigger {
+  border-color: var(--text-primary);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .custom-select.open .custom-select__trigger {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+}
+
+/* Dropdown Menu */
+.custom-options {
+  position: absolute;
+  display: block;
+  top: 100%;
+  left: 0;
+  right: 0;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xl);
+  background: var(--bg-card);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 50;
+  margin-top: 8px;
+  transform: translateY(-10px);
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.custom-select.open .custom-options {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+  transform: translateY(0);
+}
+
+/* Options */
+.custom-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: var(--transition);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.custom-option:last-child {
+  border-bottom: none;
+}
+
+.custom-option:hover {
+  background: var(--bg-hover);
+  color: var(--primary);
+}
+
+.custom-option.selected {
+  background: var(--bg-secondary);
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.custom-option.selected::after {
+  content: '';
+  position: absolute;
+  right: 16px;
+  width: 6px;
+  height: 10px;
+  border: solid var(--primary);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Scrollbar Customization */
+.custom-options::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-options::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-options::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 10px;
+}
+
+.custom-options::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
 }

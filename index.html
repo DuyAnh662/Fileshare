@@ -47,8 +47,8 @@
         <a href="upload.html" class="nav-link">Upload</a>
         <a href="donate.html" class="nav-link" style="font-weight: 600;">Support</a>
         <button class="nav-icon-btn" onclick="openSettingsModal()" title="Settings">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="-1 -1 26 26" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="3" />
             <path
               d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
@@ -60,6 +60,12 @@
 
   <!-- Hero Section -->
   <section class="hero">
+    <!-- Animated Background Elements -->
+    <div class="hero-grid"></div>
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-orb hero-orb-3"></div>
+
     <div class="container">
       <h1 class="hero-title">Share and download files for free with the community.</h1>
       <p class="hero-subtitle">
@@ -90,7 +96,7 @@
   <!-- Features Section -->
   <section class="section">
     <div class="container">
-      <div class="section-header">
+      <div class="section-header scroll-animate">
         <!-- Intro SEO Section -->
         <section style="max-width: 800px; margin: 0 auto 40px auto; text-align: center;">
           <h2>Introduction to FileShare All Free</h2>
@@ -104,8 +110,8 @@
         <p class="section-subtitle">Simple file sharing platform, not complex</p>
       </div>
 
-      <div class="features">
-        <div class="card feature-card">
+      <div class="features stagger-children">
+        <div class="card feature-card scroll-animate-child">
           <div class="feature-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -118,7 +124,7 @@
           </p>
         </div>
 
-        <div class="card feature-card">
+        <div class="card feature-card scroll-animate-child">
           <div class="feature-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -132,7 +138,7 @@
           </p>
         </div>
 
-        <div class="card feature-card">
+        <div class="card feature-card scroll-animate-child">
           <div class="feature-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -145,7 +151,7 @@
           </p>
         </div>
 
-        <div class="card feature-card">
+        <div class="card feature-card scroll-animate-child">
           <div class="feature-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -167,13 +173,13 @@
   <!-- How It Works -->
   <section class="section" style="background: var(--bg-secondary);">
     <div class="container">
-      <div class="section-header">
+      <div class="section-header scroll-animate">
         <h2 class="section-title">How it works</h2>
         <p class="section-subtitle">3 steps to share your file</p>
       </div>
 
-      <div class="features">
-        <div class="card feature-card">
+      <div class="features stagger-children">
+        <div class="card feature-card scroll-animate-child">
           <div class="feature-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -188,7 +194,7 @@
           </p>
         </div>
 
-        <div class="card feature-card">
+        <div class="card feature-card scroll-animate-child">
           <div class="feature-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -202,7 +208,7 @@
           </p>
         </div>
 
-        <div class="card feature-card">
+        <div class="card feature-card scroll-animate-child">
           <div class="feature-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -222,7 +228,7 @@
   <!-- Latest Files -->
   <section class="section">
     <div class="container">
-      <div class="section-header">
+      <div class="section-header scroll-animate">
         <h2 class="section-title">Latest Files</h2>
         <p class="section-subtitle">Files shared recently</p>
       </div>
@@ -233,15 +239,15 @@
         </div>
       </div>
 
-      <div class="text-center mt-4">
-        <a href="files.html" class="btn btn-secondary">
+      <div id="load-more-container" class="text-center mt-4">
+        <button id="load-more-btn" class="btn btn-secondary">
           <span>See all</span>
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M5 12h14" />
             <path d="m12 5 7 7-7 7" />
           </svg>
-        </a>
+        </button>
       </div>
     </div>
   </section>
@@ -249,7 +255,7 @@
   <!-- Legal Warning -->
   <section class="section">
     <div class="container" style="max-width: 800px;">
-      <div class="alert alert-warning">
+      <div class="alert alert-warning scroll-animate-scale">
         <span class="alert-icon">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
@@ -271,7 +277,7 @@
   <!-- Support Banner -->
   <section class="section" style="padding: 40px 0;">
     <div class="container" style="max-width: 800px;">
-      <div
+      <div class="scroll-animate"
         style="background: var(--bg-card); border-radius: 16px; padding: 32px; text-align: center; border: 2px solid var(--text-primary);">
         <div
           style="width: 56px; height: 56px; background: var(--text-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
@@ -297,7 +303,8 @@
       <div class="footer-content">
         <div class="footer-section">
           <h4>FileShare</h4>
-          <p class="text-muted">FileShare is a platform for sharing files via Google Drive. Simple, secure, and free.</p>
+          <p class="text-muted">FileShare is a platform for sharing files via Google Drive. Simple, secure, and free.
+          </p>
         </div>
 
         <div class="footer-section">
@@ -331,6 +338,7 @@
   <script src="js/config.js"></script>
   <script src="js/settings.js"></script>
   <script src="js/icons.js"></script>
+  <script src="js/animations.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/rateLimit.js"></script>
   <script src="js/api.js"></script>
@@ -352,20 +360,58 @@
     // Load latest files
     async function loadLatestFiles() {
       const container = document.getElementById('latest-files');
-
       const result = await api.getApprovedFiles(null, 1, 6);
 
       if (!result.success || !result.data || result.data.length === 0) {
         utils.showEmptyState(container, 'No files yet', 'Be the first to share!', 'inbox');
+        // Hide load more button if no files
+        const btnContainer = document.getElementById('load-more-container');
+        if (btnContainer) btnContainer.style.display = 'none';
         return;
       }
 
       container.innerHTML = result.data.map(file => utils.createFileCard(file)).join('');
     }
 
+    // Handle "See all" click - Load more files inline
+    async function handleLoadMore() {
+      const btn = document.getElementById('load-more-btn');
+      const container = document.getElementById('load-more-container');
+
+      // Loading state
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner" style="width: 16px; height: 16px; border-width: 2px;"></div> Loading...';
+
+      // Fetch more files (e.g., 50 latest)
+      const listContainer = document.getElementById('latest-files');
+      const result = await api.getApprovedFiles(null, 1, 50);
+
+      if (result.success && result.data) {
+        // Render all files
+        listContainer.innerHTML = result.data.map(file => utils.createFileCard(file)).join('');
+
+        // Hide the button container with fade out effect
+        container.style.transition = 'opacity 0.3s ease';
+        container.style.opacity = '0';
+        setTimeout(() => {
+          container.style.display = 'none';
+        }, 300);
+      } else {
+        // Reset button on error
+        btn.disabled = false;
+        btn.innerHTML = '<span>See all</span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>';
+        utils.showToast('Failed to load files', 'error');
+      }
+    }
+
     // Init
     document.addEventListener('DOMContentLoaded', () => {
       loadLatestFiles();
+
+      const loadMoreBtn = document.getElementById('load-more-btn');
+      if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', handleLoadMore);
+      }
     });
   </script>
 </body>
