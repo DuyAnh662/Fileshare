@@ -366,6 +366,91 @@ const rateLimit = {
     },
 
     // ==================
+    // ADD EXTRA UPLOADS
+    // ==================
+
+    // Add extra uploads to current limit (from LootLabs completion)
+    async addExtraUploads(amount = 5) {
+        try {
+            const ip = await this.getClientIP();
+            const fingerprint = this.getClientFingerprint();
+            const monthKey = this.getCurrentMonthKey();
+            const { tier } = await this.getUserTier();
+            const baseMax = this.getMaxUploads(tier);
+
+            // Invalidate cache immediately
+            localStorage.removeItem('upload_limit_cache');
+
+            // Get current record
+            const { data: existing } = await db
+                .from('ip_upload_limits')
+                .select('id, upload_count, max_uploads')
+                .eq('ip_address', ip)
+                .eq('month_year', monthKey)
+                .single();
+
+            if (existing) {
+                // Update max_uploads by adding the extra amount
+                const newMax = existing.max_uploads + amount;
+                await db
+                    .from('ip_upload_limits')
+                    .update({
+                        max_uploads: newMax,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', existing.id);
+            } else {
+                // Insert new record with base max + extra
+                await db
+                    .from('ip_upload_limits')
+                    .insert({
+                        ip_address: ip,
+                        fingerprint: fingerprint,
+                        month_year: monthKey,
+                        upload_count: 0,
+                        max_uploads: baseMax + amount
+                    });
+            }
+
+            return { success: true, added: amount };
+        } catch (error) {
+            console.error('Error adding extra uploads:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // ==================
+    // SUPPORTER TIER EXPIRY ON LIMIT REACHED
+    // ==================
+
+    // Expire Supporter tier when uploads are exhausted
+    async _expireSupporterTierIfNeeded(tier, remaining, fingerprint) {
+        // Only expire Supporter tier (tier 1) when remaining is 0
+        if (tier === 1 && remaining <= 0) {
+            try {
+                await db
+                    .from('user_tiers')
+                    .update({
+                        tier: 0,
+                        tier_expires_at: null,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('fingerprint', fingerprint);
+
+                // Invalidate tier cache
+                localStorage.removeItem('user_tier_cache');
+
+                return true; // Tier was expired
+            } catch (error) {
+                console.error('Error expiring Supporter tier:', error);
+            }
+        }
+        return false; // Tier was not changed
+    },
+
+
+
+    // ==================
     // UI HELPERS
     // ==================
 
@@ -373,11 +458,29 @@ const rateLimit = {
     async renderUploadStatus() {
         // This will now use cache if available -> instant load
         const status = await this.checkUploadLimit();
+        const fingerprint = this.getClientFingerprint();
+
+        // Check if Supporter tier should be expired (when uploads exhausted)
+        if (status.tier === 1 && status.remaining <= 0) {
+            await this._expireSupporterTierIfNeeded(status.tier, status.remaining, fingerprint);
+            // Refetch status after tier change
+            localStorage.removeItem('upload_limit_cache');
+            const newStatus = await this._fetchAndCacheUploadLimit();
+            Object.assign(status, newStatus);
+        }
+
         const tierInfo = this.TIER_CONFIG[status.tier];
 
         const percentage = Math.min(100, Math.round((status.used / status.max) * 100));
         const isLow = status.remaining <= 5;
         const isEmpty = status.remaining === 0;
+
+        // Determine which buttons to show when empty
+        // If user has no tier (0), show both: upgrade tier + add extra
+        // If user has Supporter (1) - tier should already be expired when empty
+        // Premium (2) has unlimited so isEmpty should never be true
+        const showAddExtraButton = isEmpty && status.tier < 2;
+        const showUpgradeButton = isEmpty && status.tier === 0;
 
         return {
             html: `
@@ -412,9 +515,22 @@ const rateLimit = {
                     ${isEmpty ? `
                         <div class="status-upgrade">
                             <p>${t('rateLimit.limitReached') || 'You have reached your upload limit for this month.'}</p>
-                            <button class="btn btn-primary btn-sm w-100" onclick="lootlabs.showDonateModal()">
-                                ${t('rateLimit.unlockMore') || 'Unlock 100 More Uploads Free →'}
-                            </button>
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                ${showAddExtraButton ? `
+                                    <button class="btn btn-primary btn-sm w-100" onclick="lootlabs.startExtraUploadsTask()">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
+                                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        </svg>
+                                        ${t('rateLimit.addExtra') || 'Add 5 More Uploads →'}
+                                    </button>
+                                ` : ''}
+                                ${showUpgradeButton ? `
+                                    <button class="btn btn-secondary btn-sm w-100" onclick="lootlabs.showDonateModal()">
+                                        ${t('rateLimit.unlockMore') || 'Unlock More with Supporter/Premium →'}
+                                    </button>
+                                ` : ''}
+                            </div>
                         </div>
                     ` : isLow ? `
                         <div class="status-upgrade">

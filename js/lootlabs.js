@@ -21,7 +21,10 @@ const lootlabs = {
 
         // Tier thresholds
         TIER_1_REQUIREMENT: CONFIG.RATE_LIMIT.TIER_1_REQUIREMENT,
-        TIER_2_REQUIREMENT: CONFIG.RATE_LIMIT.TIER_2_REQUIREMENT
+        TIER_2_REQUIREMENT: CONFIG.RATE_LIMIT.TIER_2_REQUIREMENT,
+
+        // Extra uploads amount per completion
+        EXTRA_UPLOADS_AMOUNT: 5
     },
 
     // ==================
@@ -65,7 +68,7 @@ const lootlabs = {
     // ==================
 
     // Build LootLabs URL with callback and anti-bypass
-    // mode: 'tier1' (5 tasks) or 'tier2' (50 tasks)
+    // mode: 'tier1' (5 tasks), 'tier2' (50 tasks), or 'extra' (add 5 uploads)
     buildLootLabsUrl(mode) {
         const token = this.generateSessionToken();
 
@@ -77,6 +80,11 @@ const lootlabs = {
             // We append token for verification on return
             targetUrl = 'https://loot-link.com/s?qbozZeHL';
             localStorage.setItem('lootlabs_target_goal', '50');
+        } else if (mode === 'extra') {
+            // Extra uploads: +5 uploads per completion
+            // Using the same link as Supporter
+            targetUrl = 'https://lootdest.org/s?ord2fkjR';
+            localStorage.setItem('lootlabs_target_goal', 'extra');
         } else {
             // Supporter: 5 tasks
             // User provided link: https://lootdest.org/s?ord2fkjR
@@ -95,9 +103,79 @@ const lootlabs = {
         window.open(url, '_blank');
     },
 
+    // Start extra uploads task (convenience function)
+    startExtraUploadsTask() {
+        this.startTask('extra');
+    },
+
     // ==================
     // COMPLETION TRACKING
     // ==================
+
+    // Record extra uploads completion (adds 5 uploads to current limit)
+    async recordExtraUploadCompletion(token) {
+        try {
+            // Verify token
+            const verification = this.verifySessionToken(token);
+            if (!verification.valid) {
+                console.error('Invalid session:', verification.reason);
+                return { success: false, error: verification.reason };
+            }
+
+            const fingerprint = rateLimit.getClientFingerprint();
+            const ip = await rateLimit.getClientIP();
+
+            // Check if token already used (anti-replay)
+            const { data: existing } = await db
+                .from('lootlabs_completions')
+                .select('id')
+                .eq('session_token', token)
+                .single();
+
+            if (existing) {
+                return { success: false, error: 'Token already used' };
+            }
+
+            // Record completion with type 'extra'
+            const { error: insertError } = await db
+                .from('lootlabs_completions')
+                .insert({
+                    fingerprint: fingerprint,
+                    ip_address: ip,
+                    session_token: token,
+                    user_agent: navigator.userAgent,
+                    completion_type: 'extra'
+                });
+
+            if (insertError) throw insertError;
+
+            // Add extra uploads to user's limit
+            const extraResult = await rateLimit.addExtraUploads(this.CONFIG.EXTRA_UPLOADS_AMOUNT);
+            if (!extraResult.success) {
+                throw new Error(extraResult.error || 'Failed to add extra uploads');
+            }
+
+            // Remove session token
+            localStorage.removeItem('lootlabs_session_token');
+            localStorage.removeItem('lootlabs_session_start');
+            localStorage.removeItem('lootlabs_target_goal');
+
+            // Get updated limit info
+            const status = await rateLimit.checkUploadLimit();
+
+            return {
+                success: true,
+                extraAdded: this.CONFIG.EXTRA_UPLOADS_AMOUNT,
+                newRemaining: status.remaining,
+                newMax: status.max
+            };
+        } catch (error) {
+            console.error('Error recording extra upload completion:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+
 
     // Record LootLabs completion
     async recordCompletion(token) {
@@ -364,6 +442,31 @@ const lootlabs = {
         }
 
         const result = await this.recordCompletion(token);
+        return result;
+    },
+
+    // Handle LootLabs callback for extra uploads specifically
+    async handleExtraCallback() {
+        const urlParams = new URLSearchParams(window.location.search);
+        let token = urlParams.get('token');
+
+        // Fallback: if LootLabs does not return token in URL,
+        // use the last session token stored in localStorage
+        if (!token) {
+            token = localStorage.getItem('lootlabs_session_token');
+        }
+
+        if (!token) {
+            return { success: false, error: 'No token provided' };
+        }
+
+        // Verify this was an extra uploads task
+        const targetGoal = localStorage.getItem('lootlabs_target_goal');
+        if (targetGoal !== 'extra') {
+            return { success: false, error: 'Invalid callback type' };
+        }
+
+        const result = await this.recordExtraUploadCompletion(token);
         return result;
     }
 };

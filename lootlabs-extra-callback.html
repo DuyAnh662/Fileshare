@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Extra Uploads - FileShare</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="js/head.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="callback-container"
+        style="min-height: 100vh; display:flex; align-items:center; justify-content:center; padding:2rem; background:linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);">
+        <div class="card callback-card" id="extra-content"
+            style="max-width:480px; text-align:center; padding:3rem 2rem;">
+            <div class="callback-icon loading"
+                style="width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:2.5rem;background:linear-gradient(135deg,#3b82f6,#2563eb);color:white;">
+                ⏳
+            </div>
+            <h1 class="callback-title" style="font-size:1.75rem;margin-bottom:0.75rem;color:var(--text-primary);">
+                Verifying your task...
+            </h1>
+            <p class="callback-message" style="color:var(--text-muted);margin-bottom:2rem;line-height:1.6;">
+                Please wait while we process your request.
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/rateLimit.js"></script>
+    <script src="js/lootlabs.js"></script>
+    <script>
+        async function initPage() {
+            const container = document.getElementById('extra-content');
+
+            // Check if this is an extra uploads callback
+            const targetGoal = localStorage.getItem('lootlabs_target_goal');
+            if (targetGoal !== 'extra') {
+                renderAccessDenied('This page is for extra uploads only.');
+                return;
+            }
+
+            // Try to handle callback first
+            try {
+                const result = await lootlabs.handleExtraCallback();
+
+                if (result.success) {
+                    // Success!
+                    const payload = {
+                        success: true,
+                        goal: 'extra',
+                        extraAdded: result.extraAdded,
+                        newRemaining: result.newRemaining,
+                        newMax: result.newMax,
+                        timestamp: Date.now()
+                    };
+                    sessionStorage.setItem('lootlabs_extra_result', JSON.stringify(payload));
+
+                    // Clean URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
+
+                    // Render success
+                    renderSuccess(payload);
+                    return;
+                } else {
+                    // Try sessionStorage fallback
+                    checkSessionStorage();
+                }
+            } catch (e) {
+                console.log('Callback verify failed, checking storage:', e);
+                checkSessionStorage();
+            }
+        }
+
+        function checkSessionStorage() {
+            const raw = sessionStorage.getItem('lootlabs_extra_result');
+            if (raw) {
+                const data = JSON.parse(raw);
+                // Basic anti-bypass: must be recent and correct goal
+                const now = Date.now();
+                const maxAgeMs = 5 * 60 * 1000; // 5 minutes
+
+                if (data.goal === 'extra' && (now - data.timestamp) < maxAgeMs) {
+                    renderSuccess(data);
+                } else {
+                    renderAccessDenied();
+                }
+            } else {
+                renderAccessDenied();
+            }
+        }
+
+        function renderSuccess(data) {
+            const container = document.getElementById('extra-content');
+
+            container.innerHTML = `
+            <div class="callback-icon success" style="width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:2.5rem;background:linear-gradient(135deg,#10b981,#059669);color:white;">
+                ✓
+            </div>
+            <h1 class="callback-title" style="font-size:1.75rem;margin-bottom:0.75rem;color:var(--text-primary);">
+                Uploads Added!
+            </h1>
+            <p class="callback-message" style="color:var(--text-muted);margin-bottom:1.5rem;line-height:1.6;">
+                <strong>+${data.extraAdded} uploads</strong> have been added to your account.
+            </p>
+            <div class="extra-info" style="margin-top:1rem;padding:1.5rem;background:var(--bg-tertiary);border-radius:12px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                    <span style="color:var(--text-muted);font-size:0.875rem;">Uploads remaining</span>
+                    <span style="font-size:1.5rem;font-weight:700;color:var(--success);">${data.newRemaining}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <span style="color:var(--text-muted);font-size:0.875rem;">Monthly limit</span>
+                    <span style="font-size:1rem;font-weight:600;color:var(--text-primary);">${data.newMax}</span>
+                </div>
+            </div>
+            <p style="margin-top:1.25rem;color:var(--text-secondary);font-size:0.9rem;">
+                Thank you for supporting FileShare! Each task helps keep the service free for everyone.
+            </p>
+            <div class="callback-actions" style="display:flex;flex-direction:column;gap:0.75rem;margin-top:1.5rem;">
+                <a href="upload.html" class="btn btn-primary">Go to Upload page</a>
+                <a href="index.html" class="btn btn-secondary">Back to Home</a>
+            </div>
+            `;
+        }
+
+        function renderError(msg) {
+            const container = document.getElementById('extra-content');
+            container.innerHTML = `
+            <div class="callback-icon error" style="width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:2.5rem;background:linear-gradient(135deg,#ef4444,#dc2626);color:white;">
+                ✕
+            </div>
+            <h1 class="callback-title">Verification Failed</h1>
+            <p class="callback-message" style="color:var(--text-muted);margin-bottom:2rem;line-height:1.6;">
+                ${msg || 'Unable to verify your task completion. Please try again.'}
+            </p>
+            <div class="callback-actions" style="display:flex;flex-direction:column;gap:0.75rem;">
+                <a href="upload.html" class="btn btn-primary">Try Again</a>
+            </div>
+            `;
+        }
+
+        function renderAccessDenied(msg) {
+            const container = document.getElementById('extra-content');
+            container.innerHTML = `
+            <div class="callback-icon error" style="width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:2.5rem;background:linear-gradient(135deg,#ef4444,#dc2626);color:white;">
+                ✕
+            </div>
+            <h1 class="callback-title">Access Denied</h1>
+            <p class="callback-message" style="color:var(--text-muted);margin-bottom:2rem;line-height:1.6;">
+                ${msg || 'This page can only be opened after completing a task.'}
+            </p>
+            <div class="callback-actions" style="display:flex;flex-direction:column;gap:0.75rem;">
+                <a href="upload.html" class="btn btn-primary">Go to Upload page</a>
+            </div>
+            `;
+        }
+
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+
+</html>
