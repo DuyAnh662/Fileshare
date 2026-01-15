@@ -216,12 +216,22 @@ const lootlabs = {
             // Update user tier count
             await this._updateUserTierCount(fingerprint, ip);
 
-            // Remove session token
+            // Remove session token and goal
             localStorage.removeItem('lootlabs_session_token');
             localStorage.removeItem('lootlabs_session_start');
+            localStorage.removeItem('lootlabs_target_goal');
 
-            // Get new tier info
+            // IMPORTANT: Invalidate tier cache so getUserTier fetches fresh data
+            localStorage.removeItem('user_tier_cache');
+
+            // Get new tier info (will fetch fresh from DB)
             const tierInfo = await rateLimit.getUserTier();
+
+            console.log('[LootLabs] Completion recorded successfully:', {
+                fingerprint,
+                newCount: tierInfo.lootlabsCount,
+                newTier: tierInfo.tier
+            });
 
             return {
                 success: true,
@@ -237,15 +247,20 @@ const lootlabs = {
     // Update completion count and check upgrade
     async _updateUserTierCount(fingerprint, ip) {
         try {
-            // Count total user completions
+            // Count total user completions (exclude 'extra' type which is for adding uploads, not for tier progress)
             const { count, error: countError } = await db
                 .from('lootlabs_completions')
                 .select('id', { count: 'exact', head: true })
-                .eq('fingerprint', fingerprint);
+                .eq('fingerprint', fingerprint)
+                .or('completion_type.is.null,completion_type.neq.extra');
 
-            if (countError) throw countError;
+            if (countError) {
+                console.error('[LootLabs] Error counting completions:', countError);
+                throw countError;
+            }
 
             const totalCount = count || 0;
+            console.log('[LootLabs] Completion count for fingerprint', fingerprint, ':', totalCount);
 
             // Determine new tier
             let newTier = 0;

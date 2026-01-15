@@ -87,6 +87,9 @@
         async function renderStatus(data) {
             const container = document.getElementById('premium-content');
 
+            // Clear cache to get fresh data from DB
+            localStorage.removeItem('user_tier_cache');
+
             // Get authoritative count
             const tierInfo = await rateLimit.getUserTier();
             const total = tierInfo.lootlabsCount || 0;
