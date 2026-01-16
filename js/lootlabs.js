@@ -224,8 +224,7 @@ const lootlabs = {
                     fingerprint: fingerprint,
                     ip_address: ip,
                     session_token: token,
-                    user_agent: navigator.userAgent,
-                    completion_type: 'tier' // Explicitly mark as tier completion
+                    user_agent: navigator.userAgent
                 });
 
             if (insertError) throw insertError;
@@ -273,10 +272,10 @@ const lootlabs = {
                 .single();
 
             // 2. Count total user completions from logs
-            // Exclude 'extra' type
+            // We cannot distinguish types if the column is missing, so we count all
             const { data: completions, error: countError } = await db
                 .from('lootlabs_completions')
-                .select('id, completion_type')
+                .select('id')
                 .eq('fingerprint', fingerprint);
 
             if (countError) {
@@ -287,7 +286,7 @@ const lootlabs = {
             // Calculate reliable total
             let dbCount = 0;
             if (completions) {
-                dbCount = completions.filter(c => !c.completion_type || c.completion_type === 'tier').length;
+                dbCount = completions.length;
             }
 
             // Robustness: ensure we don't go backwards or fail to increment if DB select is incomplete
