@@ -206,6 +206,7 @@ const lootlabs = {
             const ip = await rateLimit.getClientIP();
 
             // Check if token already used (anti-replay)
+            // Note: If RLS blocks this select, anti-replay might be weaker, but we proceed
             const { data: existing } = await db
                 .from('lootlabs_completions')
                 .select('id')
@@ -223,7 +224,8 @@ const lootlabs = {
                     fingerprint: fingerprint,
                     ip_address: ip,
                     session_token: token,
-                    user_agent: navigator.userAgent
+                    user_agent: navigator.userAgent,
+                    completion_type: 'tier' // Explicitly mark as tier completion
                 });
 
             if (insertError) throw insertError;
@@ -255,6 +257,7 @@ const lootlabs = {
             };
         } catch (error) {
             console.error('Error recording completion:', error);
+            // Even if post-processing fails, return false to alert user
             return { success: false, error: error.message };
         }
     },
@@ -262,70 +265,89 @@ const lootlabs = {
     // Update completion count and check upgrade
     async _updateUserTierCount(fingerprint, ip) {
         try {
-            // Count total user completions (exclude 'extra' type which is for adding uploads, not for tier progress)
-            // We need to count records where completion_type is null OR not equal to 'extra'
+            // 1. Get current state from user_tiers first
+            const { data: existingTier } = await db
+                .from('user_tiers')
+                .select('id, tier, lootlabs_count, tier_expires_at')
+                .eq('fingerprint', fingerprint)
+                .single();
+
+            // 2. Count total user completions from logs
+            // Exclude 'extra' type
             const { data: completions, error: countError } = await db
                 .from('lootlabs_completions')
                 .select('id, completion_type')
                 .eq('fingerprint', fingerprint);
 
-            // Filter out 'extra' type completions manually (more reliable than complex OR queries)
-            let totalCount = 0;
-            if (completions) {
-                totalCount = completions.filter(c => !c.completion_type || c.completion_type !== 'extra').length;
-            }
-
             if (countError) {
                 console.error('[LootLabs] Error fetching completions:', countError);
-                throw countError;
+                // Don't throw, try to proceed with increment logic
             }
-            console.log('[LootLabs] Completion count for fingerprint', fingerprint, ':', totalCount);
+
+            // Calculate reliable total
+            let dbCount = 0;
+            if (completions) {
+                dbCount = completions.filter(c => !c.completion_type || c.completion_type === 'tier').length;
+            }
+
+            // Robustness: ensure we don't go backwards or fail to increment if DB select is incomplete
+            // If we just inserted a record (which called this function), the count MUST be at least existing + 1
+            const currentCount = existingTier ? (existingTier.lootlabs_count || 0) : 0;
+
+            // Use the greater of DB count or simple increment
+            // This handles cases where RLS might hide rows from the SELECT query
+            const totalCount = Math.max(dbCount, currentCount + 1);
+
+            console.log('[LootLabs] Updating tier. DB Count:', dbCount, 'Current:', currentCount, 'New Total:', totalCount);
 
             // Determine new tier
             let newTier = 0;
             let expiresAt = null;
+            let currentTierExpiresAt = existingTier ? existingTier.tier_expires_at : null;
 
+            // Calculate thresholds
             if (totalCount >= this.CONFIG.TIER_2_REQUIREMENT) {
                 newTier = 2;
+                // Only extend expiration if moving up or it's new
+                // Or if we want to refresh duration on hitting threshold again? Usually once unlocked only.
+                // But for simplicity, we set it if we are entering/maintaining this tier.
+                // However, we shouldn't overwrite a longer expiration.
+
                 const date = new Date();
-                date.setDate(date.getDate() + CONFIG.RATE_LIMIT.TIER_2_DURATION_DAYS); // Premium duration
+                date.setDate(date.getDate() + CONFIG.RATE_LIMIT.TIER_2_DURATION_DAYS);
                 expiresAt = date.toISOString();
             } else if (totalCount >= this.CONFIG.TIER_1_REQUIREMENT) {
                 newTier = 1;
+
+                // If already tier 2, don't degrade logic here (handled below)
+
                 const date = new Date();
-                date.setDate(date.getDate() + CONFIG.RATE_LIMIT.TIER_1_DURATION_DAYS); // Supporter duration
+                date.setDate(date.getDate() + CONFIG.RATE_LIMIT.TIER_1_DURATION_DAYS);
                 expiresAt = date.toISOString();
             }
 
-            // Upsert user tier
-            const { data: existingTier } = await db
-                .from('user_tiers')
-                .select('id, tier, tier_expires_at')
-                .eq('fingerprint', fingerprint)
-                .single();
-
+            // Persist changes
             if (existingTier) {
-                // Upgrade only, no downgrade
+                let updates = {
+                    lootlabs_count: totalCount,
+                    updated_at: new Date().toISOString()
+                };
+
+                // Logic for Tier Upgrade
+                // 1. If moving to higher tier, upgrade and set expiration
                 if (newTier > existingTier.tier) {
-                    await db
-                        .from('user_tiers')
-                        .update({
-                            tier: newTier,
-                            lootlabs_count: totalCount,
-                            tier_expires_at: expiresAt,
-                            updated_at: new Date().toISOString()
-                        })
-                        .eq('id', existingTier.id);
-                } else {
-                    // Update count only
-                    await db
-                        .from('user_tiers')
-                        .update({
-                            lootlabs_count: totalCount,
-                            updated_at: new Date().toISOString()
-                        })
-                        .eq('id', existingTier.id);
+                    updates.tier = newTier;
+                    updates.tier_expires_at = expiresAt;
                 }
+                // 2. If same tier, keep existing expiration (don't shorten or reset unnecessarily)
+                // However, if we went from 0 to 0 (progress), nothing changes tier-wise.
+                // If we are at Tier 1, and count increases, we verify we qualify for Tier 1 (yes).
+
+                await db
+                    .from('user_tiers')
+                    .update(updates)
+                    .eq('id', existingTier.id);
+
             } else {
                 // Insert new
                 await db
@@ -340,6 +362,7 @@ const lootlabs = {
             }
         } catch (error) {
             console.error('Error updating user tier:', error);
+            throw error; // Re-throw so recordCompletion knows something went wrong
         }
     },
 
