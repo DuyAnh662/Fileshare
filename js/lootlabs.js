@@ -46,20 +46,31 @@ const lootlabs = {
     },
 
     // Verify valid session token
-    verifySessionToken(token) {
+    // If fromFallback is true, we're using the localStorage token directly (LootLabs didn't pass it back in URL)
+    verifySessionToken(token, fromFallback = false) {
         const savedToken = localStorage.getItem('lootlabs_session_token');
         const sessionStart = parseInt(localStorage.getItem('lootlabs_session_start') || '0');
 
-        if (!savedToken || savedToken !== token) {
+        // If no saved token exists, session was never started
+        if (!savedToken) {
+            return { valid: false, reason: 'No session found' };
+        }
+
+        // If token provided and doesn't match (and not from fallback), reject
+        if (!fromFallback && token && savedToken !== token) {
             return { valid: false, reason: 'Token mismatch' };
         }
 
-        // Check completion time
+        // Check completion time - be more lenient (allow at least 15 seconds for actual task)
         const elapsed = (Date.now() - sessionStart) / 1000;
-        if (elapsed < this.CONFIG.MIN_COMPLETION_TIME) {
+        const minTime = Math.max(15, this.CONFIG.MIN_COMPLETION_TIME || 15); // At least 15 seconds
+        if (elapsed < minTime) {
+            console.log('[LootLabs] Elapsed time:', elapsed, 'seconds, minimum required:', minTime);
             return { valid: false, reason: 'Too fast - suspected bypass' };
         }
 
+        // Valid!
+        console.log('[LootLabs] Session verified. Elapsed time:', elapsed, 'seconds');
         return { valid: true, elapsed: elapsed };
     },
 
@@ -113,14 +124,16 @@ const lootlabs = {
     // ==================
 
     // Record extra uploads completion (adds 5 uploads to current limit)
-    async recordExtraUploadCompletion(token) {
+    async recordExtraUploadCompletion(token, fromFallback = false) {
         try {
-            // Verify token
-            const verification = this.verifySessionToken(token);
+            // Verify token - pass fromFallback flag to be more lenient when using localStorage token
+            const verification = this.verifySessionToken(token, fromFallback);
             if (!verification.valid) {
-                console.error('Invalid session:', verification.reason);
+                console.error('[LootLabs Extra] Invalid session:', verification.reason);
                 return { success: false, error: verification.reason };
             }
+
+            console.log('[LootLabs Extra] Token verified, recording extra upload completion...');
 
             const fingerprint = rateLimit.getClientFingerprint();
             const ip = await rateLimit.getClientIP();
@@ -178,14 +191,16 @@ const lootlabs = {
 
 
     // Record LootLabs completion
-    async recordCompletion(token) {
+    async recordCompletion(token, fromFallback = false) {
         try {
-            // Verify token
-            const verification = this.verifySessionToken(token);
+            // Verify token - pass fromFallback flag to be more lenient when using localStorage token
+            const verification = this.verifySessionToken(token, fromFallback);
             if (!verification.valid) {
-                console.error('Invalid session:', verification.reason);
+                console.error('[LootLabs] Invalid session:', verification.reason);
                 return { success: false, error: verification.reason };
             }
+
+            console.log('[LootLabs] Token verified, recording completion...');
 
             const fingerprint = rateLimit.getClientFingerprint();
             const ip = await rateLimit.getClientIP();
@@ -248,18 +263,22 @@ const lootlabs = {
     async _updateUserTierCount(fingerprint, ip) {
         try {
             // Count total user completions (exclude 'extra' type which is for adding uploads, not for tier progress)
-            const { count, error: countError } = await db
+            // We need to count records where completion_type is null OR not equal to 'extra'
+            const { data: completions, error: countError } = await db
                 .from('lootlabs_completions')
-                .select('id', { count: 'exact', head: true })
-                .eq('fingerprint', fingerprint)
-                .or('completion_type.is.null,completion_type.neq.extra');
+                .select('id, completion_type')
+                .eq('fingerprint', fingerprint);
 
-            if (countError) {
-                console.error('[LootLabs] Error counting completions:', countError);
-                throw countError;
+            // Filter out 'extra' type completions manually (more reliable than complex OR queries)
+            let totalCount = 0;
+            if (completions) {
+                totalCount = completions.filter(c => !c.completion_type || c.completion_type !== 'extra').length;
             }
 
-            const totalCount = count || 0;
+            if (countError) {
+                console.error('[LootLabs] Error fetching completions:', countError);
+                throw countError;
+            }
             console.log('[LootLabs] Completion count for fingerprint', fingerprint, ':', totalCount);
 
             // Determine new tier
@@ -445,18 +464,24 @@ const lootlabs = {
     async handleCallback() {
         const urlParams = new URLSearchParams(window.location.search);
         let token = urlParams.get('token');
+        let fromFallback = false;
 
         // Fallback: if LootLabs does not return token in URL,
         // use the last session token stored in localStorage
         if (!token) {
             token = localStorage.getItem('lootlabs_session_token');
+            fromFallback = true;
+            console.log('[LootLabs] Using fallback token from localStorage');
         }
 
         if (!token) {
+            console.error('[LootLabs] No token available');
             return { success: false, error: 'No token provided' };
         }
 
-        const result = await this.recordCompletion(token);
+        console.log('[LootLabs] Processing callback with token:', token.substring(0, 20) + '...');
+        const result = await this.recordCompletion(token, fromFallback);
+        console.log('[LootLabs] Callback result:', result);
         return result;
     },
 
@@ -464,24 +489,31 @@ const lootlabs = {
     async handleExtraCallback() {
         const urlParams = new URLSearchParams(window.location.search);
         let token = urlParams.get('token');
+        let fromFallback = false;
 
         // Fallback: if LootLabs does not return token in URL,
         // use the last session token stored in localStorage
         if (!token) {
             token = localStorage.getItem('lootlabs_session_token');
+            fromFallback = true;
+            console.log('[LootLabs Extra] Using fallback token from localStorage');
         }
 
         if (!token) {
+            console.error('[LootLabs Extra] No token available');
             return { success: false, error: 'No token provided' };
         }
 
         // Verify this was an extra uploads task
         const targetGoal = localStorage.getItem('lootlabs_target_goal');
         if (targetGoal !== 'extra') {
+            console.error('[LootLabs Extra] Invalid callback type, expected extra but got:', targetGoal);
             return { success: false, error: 'Invalid callback type' };
         }
 
-        const result = await this.recordExtraUploadCompletion(token);
+        console.log('[LootLabs Extra] Processing callback with token:', token.substring(0, 20) + '...');
+        const result = await this.recordExtraUploadCompletion(token, fromFallback);
+        console.log('[LootLabs Extra] Callback result:', result);
         return result;
     }
 };
