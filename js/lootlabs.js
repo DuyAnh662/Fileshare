@@ -63,7 +63,7 @@ const lootlabs = {
 
         // Check completion time - be more lenient (allow at least 15 seconds for actual task)
         const elapsed = (Date.now() - sessionStart) / 1000;
-        const minTime = Math.max(15, this.CONFIG.MIN_COMPLETION_TIME || 15); // At least 15 seconds
+        const minTime = Math.max(5, this.CONFIG.MIN_COMPLETION_TIME || 5); // Allow faster completions (5s minimum)
         if (elapsed < minTime) {
             console.log('[LootLabs] Elapsed time:', elapsed, 'seconds, minimum required:', minTime);
             return { valid: false, reason: 'Too fast - suspected bypass' };

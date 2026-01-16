@@ -61,8 +61,12 @@
                     // Render success
                     renderStatus(payload);
                     return; // Stop here if success
+                } else if (result.error && result.error !== 'No token provided' && result.error !== 'No session found') {
+                    // If we have a specific error (like "Token mismatch" or "Too fast"), show it!
+                    renderError(result.error);
+                    return;
                 }
-                // If result.success is false, we fall through to check sessionStorage
+                // If result.success is false but no specific error (or just no token), we fall through to check sessionStorage
             } catch (e) {
                 // Ignore error here and try sessionStorage
                 console.log('Callback verify failed, checking storage:', e);

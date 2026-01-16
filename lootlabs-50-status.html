@@ -61,6 +61,10 @@
                     // Render success
                     renderStatus(payload);
                     return;
+                } else if (result.error && result.error !== 'No token provided' && result.error !== 'No session found') {
+                    // If we have a specific error (like "Token mismatch" or "Too fast"), show it!
+                    renderError(result.error);
+                    return;
                 }
             } catch (e) {
                 console.log('Callback verify failed, checking storage:', e);
