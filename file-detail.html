@@ -171,12 +171,50 @@
         </div>
     </div>
 
+    <!-- Download Limit Modal -->
+    <div id="download-limit-modal" class="modal-overlay" style="z-index: 9999;">
+        <div class="modal" style="max-width: 400px; text-align: center; padding: 32px;">
+            <div
+                style="width: 64px; height: 64px; background: rgba(239, 68, 68, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                    stroke="var(--danger)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" x2="12" y1="15" y2="3" />
+                </svg>
+            </div>
+            <h3 style="font-size: 1.25rem; margin-bottom: 8px;">Download Limit Reached</h3>
+            <p class="text-muted" style="margin-bottom: 24px; font-size: 0.95rem;">
+                You've used all your downloads this month. Complete a quick task to get 5 more downloads!
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button id="get-more-downloads-btn" class="btn btn-primary" style="width: 100%;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Get 5 More Downloads (Free)
+                </button>
+                <a href="donate.html" class="btn btn-secondary" style="width: 100%;">
+                    Learn More About Support
+                </a>
+                <button class="btn" onclick="closeDownloadLimitModal()"
+                    style="background: transparent; color: var(--text-muted); border: none;">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/config.js"></script>
     <script src="js/settings.js"></script>
     <script src="js/icons.js"></script>
     <script src="js/utils.js"></script>
+    <script src="js/stateManager.js"></script>
     <script src="js/rateLimit.js"></script>
+    <script src="js/lootlabs.js"></script>
     <script src="js/api.js"></script>
     <script>
         const detailContainer = document.getElementById('file-detail');
@@ -259,11 +297,8 @@
                 disableReportBtn('Reported');
             }
 
-            document.getElementById('download-btn').addEventListener('click', () => {
-                if (api.incrementDownload) { // Check if function exists
-                    api.incrementDownload(fileId);
-                }
-            });
+            // Setup download button with limit check
+            setupDownloadButton(file, fileId);
 
             const reportBtn = document.getElementById('report-btn');
             const modalOverlay = document.getElementById('report-modal-overlay');
@@ -330,6 +365,85 @@
                 }
             }
         }
+
+        // ==================
+        // DOWNLOAD LIMIT FUNCTIONS
+        // ==================
+
+        // Biến lưu thông tin file và fileId cho download
+        let currentFile = null;
+        let currentFileId = null;
+
+        // Setup download button with limit check
+        function setupDownloadButton(file, fileId) {
+            currentFile = file;
+            currentFileId = fileId;
+
+            const downloadBtn = document.getElementById('download-btn');
+            if (!downloadBtn) return;
+
+            // Chặn default navigation, kiểm tra limit trước
+            downloadBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+
+                // Kiểm tra quota
+                const status = await rateLimit.checkUploadLimit();
+
+                // Nếu hết quota (tier < 2 và remaining <= 0)
+                if (!status.allowed && status.tier < 2) {
+                    showDownloadLimitModal();
+                    return;
+                }
+
+                // Còn quota - cho download và tăng count
+                if (api.incrementDownload) {
+                    api.incrementDownload(fileId);
+                }
+
+                // Tăng upload count (vì dùng chung quota)
+                await rateLimit.incrementUploadCount();
+
+                // Mở link Google Drive
+                window.open(file.drive_link, '_blank', 'noopener');
+            });
+        }
+
+        // Show download limit modal
+        function showDownloadLimitModal() {
+            const modal = document.getElementById('download-limit-modal');
+            if (modal) {
+                modal.classList.add('active');
+
+                // Setup "Get More Downloads" button
+                const getMoreBtn = document.getElementById('get-more-downloads-btn');
+                if (getMoreBtn) {
+                    getMoreBtn.onclick = () => {
+                        closeDownloadLimitModal();
+                        if (typeof lootlabs !== 'undefined') {
+                            lootlabs.startExtraUploadsTask();
+                        } else {
+                            window.location.href = 'donate.html';
+                        }
+                    };
+                }
+            }
+        }
+
+        // Close download limit modal
+        window.closeDownloadLimitModal = function () {
+            const modal = document.getElementById('download-limit-modal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        };
+
+        // Close modal on outside click
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('download-limit-modal');
+            if (e.target === modal) {
+                closeDownloadLimitModal();
+            }
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
             loadFileDetail();

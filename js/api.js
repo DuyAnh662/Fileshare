@@ -127,6 +127,29 @@ const api = {
         }
     },
 
+    // Increment download count for a file
+    async incrementDownload(fileId) {
+        try {
+            // Tăng download_count trong database
+            const { data, error } = await db.rpc('increment_download_count', {
+                file_id_input: fileId
+            });
+
+            // Nếu RPC không tồn tại, thử dùng cách khác
+            if (error && error.code === 'PGRST202') {
+                // RPC không tồn tại, log warning
+                console.warn('[API] increment_download_count RPC not found, skipping DB update');
+            } else if (error) {
+                throw error;
+            }
+
+            return { success: true };
+        } catch (error) {
+            console.error('Error incrementing download:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
     // ==================
     // ADMIN OPERATIONS
     // ==================

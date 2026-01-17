@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fileshare-v3';
+const CACHE_NAME = 'fileshare-v4';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -7,6 +7,9 @@ const urlsToCache = [
   '/js/settings.js',
   '/js/icons.js',
   '/js/utils.js',
+  '/js/stateManager.js',
+  '/js/lootlabs.js',
+  '/js/rateLimit.js',
   '/js/api.js',
   '/manifest.json',
   '/manifest-light.json',
